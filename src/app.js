@@ -3,6 +3,8 @@ const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 let userJwt = null;
 
+
+exports.getJwt = () => userJwt;
 app.allowRendererProcessReuse = true;
 
 app.whenReady()

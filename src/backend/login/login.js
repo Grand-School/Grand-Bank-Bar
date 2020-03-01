@@ -1,9 +1,7 @@
 const loginForm = document.getElementById('loginForm');
 const updateSettingsButton = document.getElementById('updateSettingsButton');
 const loginRow = document.getElementById('loginRow');
-const $ = require('jquery');
-let server, loginRowHideAble = false;
-require('bootstrap/dist/js/bootstrap.min');
+let currentServer, loginRowHideAble = false;
 
 $(() => {
     $(loginRow).on('hide.bs.modal', e => loginRowHideAble);
@@ -20,8 +18,8 @@ $(() => {
 
     $.ajax('/server')
         .done(response => {
-            server = response;
-            $.get(server + 'rest/api/recaptcha')
+            currentServer = response;
+            $.get(currentServer + 'rest/api/recaptcha')
                 .done(reCaptchaToken => {
                     $.loadScript('https://www.google.com/recaptcha/api.js?render=' + reCaptchaToken, () => {
                         grecaptcha.ready(() => {
@@ -38,7 +36,7 @@ $(() => {
         e.preventDefault();
 
         $.ajax({
-            url: server + 'rest/login',
+            url: currentServer + 'rest/login',
             method: 'POST',
             data: $(loginForm).serialize(),
             error: request => done(request),

@@ -1,3 +1,337 @@
+.img-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.nav-link,
+.nav-link:hover {
+    color: #333;
+}
+
+.nav-link svg {
+    fill: #999;
+}
+
+.nav-link:hover svg {
+    fill: black;
+}
+
+.custom-small-navbar-button span,
+.custom-small-navbar-button {
+    color: black;
+}
+
+.sidebar {
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    min-width: 210px;
+    min-height: 100vh;
+}
+
+.row {
+    display: flex;
+    align-items: stretch;
+}
+
+.custom-button {
+    cursor: pointer;
+}
+
+.custom-right {
+    position: absolute;
+    text-align: right;
+    right: 10px;
+}
+
+.spinner-border-medium {
+    width: 2rem;
+    height: 2rem;
+    border-width: 0.4em;
+}
+
+.beautiful-input {
+    outline: none;
+    -webkit-appearance: none;
+    width: 30%;
+    text-align: center;
+    font-size: 1.875em;
+    border: 0;
+    font-family: inherit;
+    padding: 12px 0;
+    height: 48px;
+    font-weight: 500;
+    border-bottom: 2px solid #C8CCD4;
+    background: none;
+    border-radius: 0;
+    color: #223254;
+    transition: all .15s ease;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.font-size-medium {
+    font-size: 1.5em;
+}
+
+.small-menu {
+    margin-top: 5px;
+    border: 1px solid black !important;
+    border-radius: 10px;
+}
+
+.update-profile-btn {
+    color: blue;
+}
+
+#historyTable .bg-dark {
+    background-color: #444 !important;
+}
+
+@media (min-width: 770px) {
+    .small-menu {
+        display: none;
+    }
+
+    .small-nav-button {
+        display: none;
+    }
+}
+
+@media (max-width: 770px) {
+    .col-5 {
+        max-width: none !important;
+    }
+}
+
+@media (max-width: 1290px) {
+    main {
+        flex: 0px !important;
+        margin-left: 0px !important;
+    }
+}
+
+.custom-error-message {
+    color: #E74C3C;
+}
+
+.console {
+    overflow: scroll;
+    height: 700px;
+    white-space: nowrap;
+}
+
+.rate-deck .card {
+    margin-right: 5px !important;
+    margin-left: 5px !important;
+}
+
+.selected-animation {
+    border-color: #4BBF73 !important;
+    animation: success_fade_in 1s;
+}
+
+
+.unselected-animation {
+    border-color: rgba(0, 0, 0, 0.125);
+    animation: success_fade_out 1s;
+}
+
+@keyframes success_fade_in {
+    from {border-color: rgba(0, 0, 0, 0.125);}
+    to {border-color: #4BBF73;}
+}
+
+@keyframes success_fade_out {
+    from {border-color: #4BBF73;}
+    to {border-color: rgba(0, 0, 0, 0.125);}
+}
+
 #itemsToBuy div {
     margin-bottom: 5px;
+}
+
+.pincode input:focus,
+.pincode select:focus,
+.pincode textarea:focus,
+.pincode button:focus {
+    outline: none;
+}
+
+.pincode {
+    background: #ededed;
+    position: absolute;
+    width: 370px; height: 500px;
+    left: 50%;
+    margin-left: -180px;
+    top: 50%;
+    padding: 30px;
+    -webkit-box-shadow: 0px 5px 5px -0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0px 5px 5px -0px rgba(0,0,0,0.3);
+    box-shadow: 0px 5px 5px -0px rgba(0,0,0,0.3);
+}
+
+.pincode-box {
+    background: #ededed;
+    margin: 3.5%;
+    width: 92%;
+    font-size: 4em;
+    text-align: center;
+    border: 1px solid #d5d5d5;
+}
+
+.pincode-button {
+    background: #ededed;
+    color: #7e7e7e;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5em;
+    text-align: center;
+    width: 60px;
+    height: 60px;
+    margin: 7px 20px;
+    padding: 0;
+}
+
+.clear {
+    font-size: 1em;
+}
+
+.pincode-button:hover {
+    box-shadow: #506CE8 0 0 1px 1px;
+}
+
+.pincode-button:active {
+    background: #506CE8;
+    color: #fff;
+}
+
+.clear:hover {
+    box-shadow: #ff3c41 0 0 1px 1px;
+}
+
+.clear:active {
+    background: #ff3c41;
+    color: #fff;
+}
+
+.pincode-modal {
+    margin-top: 300px;
+    border: none !important;
+}
+
+.circle-loader {
+    margin: 5px 0px 5px 0px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-left-color: #5cb85c;
+    animation-name: loader-spin;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: content-box;
+}
+
+.circle-loader,
+.circle-loader:after {
+    border-radius: 50%;
+    width: 8em;
+    height: 8em;
+}
+
+.load-complete {
+    -webkit-animation: none;
+    animation: none;
+    border-color: #5cb85c;
+    transition: border 500ms ease-out;
+}
+
+.load-error {
+    -webkit-animation: none;
+    animation: none;
+    border-color: red;
+    transition: border 500ms ease-out;
+}
+
+.checkmark {
+    display: none;
+    box-sizing: content-box;
+}
+
+.checkmark.draw:after {
+    opacity: 1;
+    height: 4em;
+    width: 2em;
+    transform-origin: left top;
+    border-right: 2px solid #5cb85c;
+    border-top: 2px solid #5cb85c;
+    content: "";
+    left: 2em;
+    top: 4em;
+    position: absolute;
+    animation-duration: 1.2s;
+    animation-timing-function: ease;
+    animation-name: checkmark;
+    transform: scaleX(-1) rotate(135deg);
+}
+
+.checkmark.error {
+    position: absolute;
+    left: 2em;
+    top: 2em;
+    width: 4em;
+    height: 4em;
+}
+
+.checkmark.error:before, .checkmark.error:after {
+    position: absolute;
+    content: " ";
+    height: 4em;
+    width: 2px;
+    background-color: #f00;
+}
+
+.checkmark.error:before {
+    transform: rotate(45deg);
+}
+
+.checkmark.error:after {
+    transform: rotate(-45deg);
+}
+
+@keyframes loader-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes checkmark {
+    0% {
+        height: 0;
+        width: 0;
+        opacity: 1;
+    }
+    20% {
+        height: 0;
+        width: 2em;
+        opacity: 1;
+    }
+    40% {
+        height: 4em;
+        width: 2em;
+        opacity: 1;
+    }
+    100% {
+        height: 4em;
+        width: 2em;
+        opacity: 1;
+    }
 }

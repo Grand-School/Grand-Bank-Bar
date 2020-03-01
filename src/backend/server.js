@@ -12,6 +12,7 @@ function loadServer(settings) {
 
     app.use(express.static(__dirname + '/login'));
     app.use(express.static(__dirname + '/../../node_modules/bootstrap/dist/css'));
+    app.use(express.static(__dirname + '/../frontend'));
     app.use(express.urlencoded());
 
     app.post('', (req, resp) => {
