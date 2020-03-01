@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grand Bank Bar</title>
+
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="login.js" defer></script>
+</head>
+<body>
+<div class="modal fade" tabindex="-1" id="loginRow">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Авторизация</h4>
+            </div>
+            <form id="loginForm">
+                <input type="hidden" name="reCaptchaResponse">
+                <div class="modal-body mb-3" id="formInputs">
+                    <div class="form-group">
+                        <label for="loginInput">Логин</label>
+                        <input type="text" name="login" id="loginInput" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordInput">Пароль</label>
+                        <input type="password" name="password" id="passwordInput" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: -20px;">
+                    <a id="updateSettingsButton" href="#">Обновить настройки</a>
+                    <button type="submit" class="btn btn-primary">
+                        Войти
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

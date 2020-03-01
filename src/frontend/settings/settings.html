@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grand Bank Bar</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/font-awesome/css/font-awesome.min.css">
+
+    <script src="../../../node_modules/popper.js/dist/umd/popper.js"></script>
+    <script src="../script.js" defer></script>
+    <script src="./settings.js" defer></script>
+</head>
+<body>
+<div class="modal fade" tabindex="-1" id="settingsRow">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Настройки</h4>
+            </div>
+            <form id="settingsForm">
+                <div class="modal-body mb-3" id="formInputs">
+                    <div class="form-group">
+                        <label for="serverInput">Сервер</label>
+                        <input type="text" name="server" id="serverInput" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: -20px;">
+                    <button type="submit" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
