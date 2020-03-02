@@ -194,7 +194,7 @@ function buy(pinCode) {
         $(pincodeCircle).removeClass('load-error').toggleClass('load-complete');
         $(pincodeCheckmark).removeClass('error').addClass('draw').toggle();
         pincodeSound.play();
-        // successNoty("Товарвы были успешны куплены!");
+        successNoty("Товарвы были успешны куплены!");
         setTimeout(() => {
             $(pincodeRow).modal('hide');
             pincodeBox.value = '';

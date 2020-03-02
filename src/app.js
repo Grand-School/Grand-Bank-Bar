@@ -17,25 +17,24 @@ app.whenReady()
             }
         });
 
+        let serverLoaded = () => {};
+        loadServer({
+            done: () => {
+                console.log('Start server on port 3000');
+                serverLoaded();
+            },
+            token: (token) => {
+                userJwt = token;
+                window.loadFile('./frontend/bar/bar.html');
+            },
+            settings: () => window.loadFile('./frontend/settings/settings.html'),
+            server: settings.get('server_url')
+        });
 
         if (userJwt !== null && settings.has('server_url')) {
             window.loadFile('./frontend/bar/bar.html')
                 .then(() => loadWindow(window));
         } else {
-            let serverLoaded = () => {};
-            loadServer({
-                done: () => {
-                    console.log(`Start server on port 3000`);
-                    serverLoaded();
-                },
-                token: (token) => {
-                    userJwt = token;
-                    window.loadFile('./frontend/bar/bar.html');
-                },
-                settings: () => window.loadFile('./frontend/settings/settings.html'),
-                server: settings.get('server_url')
-            });
-
             if (!settings.has('server_url')) {
                 window.loadFile('./frontend/settings/settings.html')
                     .then(() => loadWindow(window));

@@ -46,7 +46,7 @@ $(() => {
         function done(request) {
             let token = request.getResponseHeader(settings.get('jwt_prefix', 'Authorization'));
             if (token === null) {
-                alert('Вы ввели неверный логин и пароль или не подтвердили капчу');
+                failNotyText('Вы ввели неверный логин и пароль или не подтвердили капчу');
                 return;
             }
 
