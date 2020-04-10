@@ -4,21 +4,26 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "start": "electron ./src/app.js"
+    "start": "electron ./src/app.js",
+    "rebuild": "electron-rebuild"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^8.0.2"
+    "electron": "^5.0.0",
+    "electron-rebuild": "^1.10.1"
   },
   "dependencies": {
     "bootstrap": "^4.4.1",
+    "electron-build-env": "^0.2.0",
     "electron-settings": "^3.2.0",
     "express": "^4.17.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.4.1",
+    "node-gyp": "^6.1.0",
     "noty": "^3.1.4",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "serialport": "^7.1.5"
   }
 }

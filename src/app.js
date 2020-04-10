@@ -1,10 +1,20 @@
 const { app, BrowserWindow } = require('electron');
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
-let userJwt = null;
+const { Reader } = require('./backend/reader');
+let userJwt = null, reader = null;
 
 exports.getJwt = () => userJwt;
+exports.getReader = () => reader;
+exports.setReader = port => reader = new Reader(port);
 app.allowRendererProcessReuse = true;
+
+if (settings.has('port')) {
+    let port = settings.get('port');
+    if (port !== '') {
+        reader = new Reader(port);
+    }
+}
 
 app.whenReady()
     .then(() => {

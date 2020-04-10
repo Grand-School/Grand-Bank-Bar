@@ -63,7 +63,7 @@ class BuyPanel {
             },
             afterSelect: user => {
                 this._nameSurnameInput.value = showUserData(user);
-                this._parseUser(user);
+                this.parseUser(user);
             },
             sorter: users => users,
             minLength: 2
@@ -118,7 +118,7 @@ class BuyPanel {
 
     loadUser(creditCard) {
         this._getUserData(creditCard)
-            .done(response => this._parseUser(response));
+            .done(response => this.parseUser(response));
     }
 
     buy() {
@@ -133,6 +133,7 @@ class BuyPanel {
     cancel() {
         $(this._chooseUserRow).modal();
         setTimeout(() => this._creditCardInput.focus(), 500);
+        this._selectedUser = null;
     }
 
     addItem({ id, name, price, discount }) {
@@ -164,7 +165,7 @@ class BuyPanel {
         this._updatePrice();
     }
 
-    _parseUser(user) {
+    parseUser(user) {
         this._selectedUser = user;
         this._userName.textContent = user.name + ' ' + user.surname;
         if (this._userBalance !== undefined) {
@@ -193,6 +194,10 @@ class BuyPanel {
             count.dataset.count = 0;
             count.textContent = 0;
         }
+    }
+
+    isActive() {
+        return this._selectedUser !== null;
     }
 
     _updatePrice() {

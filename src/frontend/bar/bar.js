@@ -90,6 +90,15 @@ $(() => {
         }
     });
 
+    getReader().setOnCard(rfid => {
+        if (buyPanel.isActive()) {
+            return;
+        }
+
+        $.get(serverUrl + `bar/rfid/${rfid}`)
+            .done(user => buyPanel.parseUser(user));
+    });
+
     pincodeBox.addEventListener('keydown', e => {
         let input = e.key;
         if (!'1234567890'.includes(input) && input !== 'Backspace') {

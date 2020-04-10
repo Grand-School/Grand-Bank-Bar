@@ -1,7 +1,7 @@
 const $ = require('jquery');
 const server = require('electron-settings').get('server_url');
 const serverUrl = server + 'rest/';
-const { getJwt } = require('electron').remote.require('./app');
+const { getJwt, getReader, setReader } = require('electron').remote.require('./app');
 const settings = require('electron-settings');
 const Noty = require('noty');
 const showUserData = user => user.name + ' ' + user.surname;
