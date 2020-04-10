@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem, LoadFileOptions } = require('electron');
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { Reader } = require('./backend/reader');
@@ -27,6 +27,8 @@ app.whenReady()
             }
         });
 
+        loadMenu(window);
+
         let serverLoaded = () => {};
         loadServer({
             done: () => {
@@ -36,6 +38,7 @@ app.whenReady()
             token: (token) => {
                 userJwt = token;
                 window.loadFile('./frontend/bar/bar.html');
+                loadMenu(window);
             },
             settings: () => window.loadFile('./frontend/settings/settings.html'),
             server: settings.get('server_url')
@@ -60,4 +63,25 @@ app.whenReady()
 function loadWindow(window) {
     window.maximize();
     window.show();
+}
+
+function loadMenu(window) {
+    let menu = new Menu();
+    menu.append(new MenuItem({
+        label: 'Настройки',
+        click() {
+            window.loadFile('./frontend/settings/settings.html', )
+                .then(() => loadWindow(window))
+        }
+    }));
+    if (userJwt !== null) {
+        menu.append(new MenuItem({
+            label: 'Бар',
+            click() {
+                window.loadFile('./frontend/bar/bar.html', )
+                    .then(() => loadWindow(window))
+            }
+        }));
+    }
+    Menu.setApplicationMenu(menu);
 }

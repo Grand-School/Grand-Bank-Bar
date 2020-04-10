@@ -9,7 +9,7 @@ $(() => {
 
     serverInput.value = settings.get('server_url', '');
     jwtPrefixInput.value = settings.get('jwt_prefix', '');
-    jwtPrefixInput.value = settings.get('port', '');
+    port.value = settings.get('port', '');
 
     settingsForm.addEventListener('submit', e => {
         e.preventDefault();
@@ -21,11 +21,16 @@ $(() => {
         if (serverInput.value !== '') {
             settings.set('server_url', serverInput.value);
         }
-        if (jwtPrefixInput.value !== '')) {
+        if (jwtPrefixInput.value !== '') {
             settings.set('jwt_prefix', jwtPrefixInput.value);
         }
-        if (port.value !== '')) {
+        if (port.value !== '') {
             settings.set('port', port.value);
+        }
+
+        if (getJwt() !== null) {
+            successNoty('Вы успешно сохранили настройки!');
+            return;
         }
 
         $('#settingsRow').modal('hide');
