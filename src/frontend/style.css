@@ -335,3 +335,9 @@
         opacity: 1;
     }
 }
+
+.bar-count[data-count="1"],
+.bar-count[data-count="0"],
+.item-select-count[data-count="0"] {
+    display: none;
+}
