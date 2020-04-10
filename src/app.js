@@ -2,11 +2,17 @@ const { app, BrowserWindow, Menu, MenuItem, LoadFileOptions } = require('electro
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { Reader } = require('./backend/reader');
-let userJwt = null, reader = null;
+let userJwt = null, reader = null, window;
 
 exports.getJwt = () => userJwt;
 exports.getReader = () => reader;
 exports.setReader = port => reader = new Reader(port);
+exports.logout = () => {
+    userJwt = null;
+    loadMenu(window);
+    window.loadURL('http://localhost:3000')
+        .then(() => loadWindow(window));
+};
 app.allowRendererProcessReuse = true;
 
 if (settings.has('port')) {
@@ -18,7 +24,7 @@ if (settings.has('port')) {
 
 app.whenReady()
     .then(() => {
-        let window = new BrowserWindow({
+        window = new BrowserWindow({
             show: false,
 
             webPreferences: {
