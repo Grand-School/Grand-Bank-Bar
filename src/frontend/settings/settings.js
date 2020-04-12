@@ -1,11 +1,12 @@
 const deskWindow = require('electron').remote.getCurrentWindow();
-const { logout } = require('electron').remote.require('./app');
+const { logout, loadSettings } = require('electron').remote.require('./app');
 const serverInput = document.getElementById('serverInput');
 const jwtPrefixInput = document.getElementById('jwtPrefix');
 const settingsForm = document.getElementById('settingsForm');
 const port = document.getElementById('port');
 const logoutButton = document.getElementById('logoutButton');
 const settingsRow = document.getElementById('settingsRow');
+const fullscreen = document.getElementById('fullscreen');
 let hideable = false;
 
 $(() => {
@@ -16,6 +17,8 @@ $(() => {
     serverInput.value = settings.get('server_url', '');
     jwtPrefixInput.value = settings.get('jwt_prefix', '');
     port.value = settings.get('port', '');
+
+    fullscreen.querySelector(`option[value="${settings.get('fullscreen_app', 'false')}"]`).selected = true;
 
     settingsForm.addEventListener('submit', e => {
         e.preventDefault();
@@ -33,6 +36,9 @@ $(() => {
         if (port.value !== '') {
             settings.set('port', port.value);
         }
+        settings.set('fullscreen_app', fullscreen.value);
+
+        loadSettings(deskWindow);
 
         if (getJwt() !== null) {
             successNoty('Вы успешно сохранили настройки!');

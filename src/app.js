@@ -7,11 +7,12 @@ let userJwt = null, reader = null, profile = null, window;
 exports.getJwt = () => userJwt;
 exports.getReader = () => reader;
 exports.setReader = port => reader = new Reader(port);
+exports.loadSettings = loadSettings;
 exports.logout = () => {
     userJwt = null;
     loadMenu(window);
     window.loadURL('http://localhost:3000')
-        .then(() => loadWindow(window));
+        .then(() => window.show());
 };
 app.allowRendererProcessReuse = true;
 
@@ -33,8 +34,9 @@ app.whenReady()
             }
         });
 
-        // window.webContents.openDevTools();
+        window.webContents.openDevTools();
 
+        loadSettings(window);
         loadMenu(window);
 
         let serverLoaded = () => {};
@@ -55,24 +57,19 @@ app.whenReady()
 
         if (userJwt !== null && settings.has('server_url')) {
             window.loadFile('./frontend/bar/bar.html')
-                .then(() => loadWindow(window));
+                .then(() => window.show());
         } else {
             if (!settings.has('server_url')) {
                 window.loadFile('./frontend/settings/settings.html')
-                    .then(() => loadWindow(window));
+                    .then(() => window.show());
             } else {
                 serverLoaded = () => {
                     window.loadURL('http://localhost:3000')
-                        .then(() => loadWindow(window));
+                        .then(() => window.show());
                 };
             }
         }
     });
-
-function loadWindow(window) {
-    window.maximize();
-    window.show();
-}
 
 function loadMenu(window) {
     let menu = new Menu();
@@ -80,7 +77,7 @@ function loadMenu(window) {
         label: 'Настройки',
         click() {
             window.loadFile('./frontend/settings/settings.html', )
-                .then(() => loadWindow(window))
+                .then(() => window.show())
         }
     }));
     if (userJwt !== null) {
@@ -88,7 +85,7 @@ function loadMenu(window) {
             label: 'Бар',
             click() {
                 window.loadFile('./frontend/bar/bar.html', )
-                    .then(() => loadWindow(window))
+                    .then(() => window.show())
             }
         }));
     }
@@ -97,9 +94,15 @@ function loadMenu(window) {
             label: 'Пользователи',
             click() {
                 window.loadFile('./frontend/users/users.html', )
-                    .then(() => loadWindow(window))
+                    .then(() => window.show())
             }
         }));
     }
     Menu.setApplicationMenu(menu);
+}
+
+function loadSettings(window) {
+    let fullscreen = settings.get('fullscreen_app', 'false') === 'true';
+    window.setFullScreen(fullscreen);
+    window.maximize();
 }
