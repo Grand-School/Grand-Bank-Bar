@@ -1,10 +1,12 @@
 const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
+const { getWindow, setReader } = require('../app');
+const { dialog } = require('electron');
 
 class Reader {
     constructor(port) {
         this._serialPort = new SerialPort(port);
-        this._onCard = [];
+        this._onCard = () => {};
         this._lastCard = null;
         this._lastCardTimeout = null;
 
@@ -18,6 +20,12 @@ class Reader {
     }
 
     _loadData(data) {
+        if (data .startsWith('WARNING')) {
+            console.log(data);
+            dialog.showErrorBox('NFC READER WARNING', data.substr(9));
+            return;
+        }
+
         if (!data.startsWith('Card detected, UID:')) {
             console.log(data);
             return;
@@ -29,7 +37,7 @@ class Reader {
         }
 
         this._setLastCard(card);
-        this._onCard.forEach(callback => callback(card));
+        this._onCard(card);
     }
 
     _setLastCard(card) {
@@ -45,7 +53,7 @@ class Reader {
     }
 
     setOnCard(onCard) {
-        this._onCard.push(onCard);
+        this._onCard = onCard;
     }
 }
 

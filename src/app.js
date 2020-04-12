@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, MenuItem, LoadFileOptions } = require('electro
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { Reader } = require('./backend/reader');
-let userJwt = null, reader = null, window;
+let userJwt = null, reader = null, profile = null, window;
 
 exports.getJwt = () => userJwt;
 exports.getReader = () => reader;
@@ -33,6 +33,8 @@ app.whenReady()
             }
         });
 
+        // window.webContents.openDevTools();
+
         loadMenu(window);
 
         let serverLoaded = () => {};
@@ -41,8 +43,9 @@ app.whenReady()
                 console.log('Start server on port 3000');
                 serverLoaded();
             },
-            token: (token) => {
+            token: ({ token, user }) => {
                 userJwt = token;
+                profile = user;
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
             },
@@ -85,6 +88,15 @@ function loadMenu(window) {
             label: 'Бар',
             click() {
                 window.loadFile('./frontend/bar/bar.html', )
+                    .then(() => loadWindow(window))
+            }
+        }));
+    }
+    if (profile !== null && (profile.role === 'ROLE_ADMIN' || profile.role === 'ROLE_RESPONSIBLE')) {
+        menu.append(new MenuItem({
+            label: 'Пользователи',
+            click() {
+                window.loadFile('./frontend/users/users.html', )
                     .then(() => loadWindow(window))
             }
         }));

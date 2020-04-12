@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const appSettings = require('electron-settings');
 const port = 3000;
 
 function loadServer(settings) {
@@ -18,8 +19,9 @@ function loadServer(settings) {
     app.use(express.urlencoded());
 
     app.post('', (req, resp) => {
-        let token = req.param('token');
-        settings.token(token)
+        let headerName = appSettings.get('jwt_prefix', 'Authorization');
+        let token = req.headers[headerName.toLowerCase()];
+        settings.token({ token, user: req.body })
     });
     app.post('/settings', (req, resp) => settings.settings());
     app.get('/server', (req, resp) => resp.send(settings.server));

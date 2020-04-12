@@ -5,6 +5,7 @@ const { getJwt, getReader, setReader } = require('electron').remote.require('./a
 const settings = require('electron-settings');
 const Noty = require('noty');
 const showUserData = user => user.name + ' ' + user.surname;
+const getNormalText = text => text === undefined || text === null ? '' : text;
 require('bootstrap/dist/js/bootstrap.min');
 let failedNote;
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grand Bank Bar</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../../node_modules/noty/lib/noty.css">    <link rel="stylesheet" href="../../../node_modules/noty/lib/noty.css">
+
+    <script src="../../../node_modules/popper.js/dist/umd/popper.js"></script>
+    <script src="../../../dist/typeahead.js"></script>
+    <script src="../script.js" defer></script>
+    <script src="users.js" defer></script>
+</head>
+<body>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 ">
+        <h1>Пользователи</h1>
+        <nav>
+            <ul class="pagination custom-list-group-item" id="classList"></ul>
+        </nav>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Логин</th>
+                <th scope="col">Роль</th>
+                <th scope="col">Баланс</th>
+                <th scope="col">Кредитная карта</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody id="usersTable"></tbody>
+        </table>
+    </main>
+
+    <div class="modal fade" tabindex="-1" id="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                </div>
+                <form class="modal-body mb-3" id="modalBody"></form>
+                <div class="modal-footer">
+                    <div class="spinner-border" role="status" id="modalSpinner" hidden>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="saveButton">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

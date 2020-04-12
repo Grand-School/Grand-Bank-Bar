@@ -44,7 +44,8 @@ $(() => {
         });
 
         function done(request) {
-            let token = request.getResponseHeader(settings.get('jwt_prefix', 'Authorization'));
+            let headerName = settings.get('jwt_prefix', 'Authorization');
+            let token = request.getResponseHeader(headerName);
             if (token === null) {
                 failNotyText('Вы ввели неверный логин и пароль или не подтвердили капчу');
                 return;
@@ -53,10 +54,20 @@ $(() => {
             loginRowHideAble = true;
             $(loginRow).modal('hide');
 
+            let headers = {};
+            headers[headerName] = token;
+
             $.ajax({
-                method: 'POST',
-                url: '',
-                data: { token }
+                url: currentServer + 'rest/users/profile',
+                headers
+            }).done(user => {
+                $.ajax({
+                    url: '',
+                    method: 'POST',
+                    mediaType: 'application/json',
+                    data: user,
+                    headers
+                });
             });
         }
     });

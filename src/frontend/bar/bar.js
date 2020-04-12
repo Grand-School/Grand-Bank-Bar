@@ -90,6 +90,7 @@ $(() => {
         }
     });
 
+    getReader().reload();
     getReader().setOnCard(rfid => {
         if (buyPanel.isActive()) {
             return;
