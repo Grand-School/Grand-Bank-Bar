@@ -347,4 +347,5 @@
     left: 0;
     bottom: 20px;
     width: 100%;
+    max-height: 50%;
 }

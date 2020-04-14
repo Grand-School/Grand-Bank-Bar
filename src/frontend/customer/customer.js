@@ -1,5 +1,7 @@
 const userName = document.getElementById('userName');
 const userBalance = document.getElementById('userBalance');
+const userCardType = document.getElementById('userCardType');
+const userCardNumber = document.getElementById('userCardNumber');
 const itemsToBuyList = document.getElementById('itemsToBuyList');
 const totalSum = document.getElementById('totalSum');
 const taxSpan = document.getElementById('taxSpan');
@@ -55,6 +57,8 @@ $(() => {
         userBalance.innerHTML = `Баланс: <span class="balance-span">${client.balance} грандик(ов)</span>`;
         userBalance.dataset.balance = client.balance;
         userName.textContent = showUserData(client);
+        userCardType.textContent = `Тип карты: ${client.cardName}`;
+        userCardNumber.textContent = `Номер карты: ${client.creditCard}`;
         taxSpan.textContent = `Налог: ${client.tax}%`;
         taxSpan.dataset.tax = client.tax;
         totalSum.textContent = 'Всего: 0 грандиков';
@@ -65,6 +69,8 @@ $(() => {
         renderModal(waitingClientModal);
         userBalance.innerHTML = '';
         userName.textContent = '';
+        userCardNumber.textContent = '';
+        userCardType.textContent = '';
         itemsToBuyList.innerHTML = '';
         totalSum.textContent = '';
         taxSpan.textContent = '';

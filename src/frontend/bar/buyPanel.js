@@ -182,7 +182,8 @@ class BuyPanel {
         this._taxSpan.textContent = 'Налог: ' + tax + '%';
         this._taxSpan.dataset.tax = tax;
         this._itemsToBuyList.innerHTML = '';
-        this._totalSpan.textContent = 'Всего: 0';
+        this._totalSpan.textContent = 'Всего: 0 грандиков';
+        this._withdrawSpan.textContent = 'К снятию: 0 грандиков';
 
         this._rowHideAble = true;
         $(this._chooseUserRow).modal('hide');
@@ -213,9 +214,9 @@ class BuyPanel {
         let buyData = this._getBuyData();
         let totalPrice = buyData.totalPrice;
         let tax = +this._taxSpan.dataset.tax;
-        this._totalSpan.textContent = 'Всего: ' + totalPrice;
+        this._totalSpan.textContent = `Всего: ${totalPrice} грандиков`;
         let taxSum = totalPrice * tax / 100;
-        this._withdrawSpan.textContent = `${this._taxTypePlus ? 'К снятию' : 'Чистая прибыль'}: ${this._taxTypePlus ? totalPrice + taxSum : totalPrice - taxSum}`;
+        this._withdrawSpan.textContent = `${this._taxTypePlus ? 'К снятию' : 'Чистая прибыль'}: ${this._taxTypePlus ? totalPrice + taxSum : totalPrice - taxSum} грандиков`;
         if (this._userBalance !== undefined) {
             this._userBalance.style.color = this._selectedUser.balance - totalPrice < 0 ? 'red' : 'black';
         }
