@@ -63,6 +63,7 @@ $(() => {
             pincodeCallback = pinCode => {
                 pincodeBox.hidden = true;
                 pincodeCircle.hidden = false;
+                getCustomerEventListener().send('pinCode', 'loading');
 
                 $.ajax({
                     url: serverUrl + `bar/?userId=${buyPanel.getUserID()}&pinCode=${pinCode}`,
@@ -70,6 +71,7 @@ $(() => {
                     data: JSON.stringify(data.items),
                     contentType: "application/json; charset=utf-8",
                     error: data => {
+                        getCustomerEventListener().send('pinCode', 'error');
                         $(pincodeCircle).removeClass('load-complete').toggleClass('load-error');
                         $(pincodeCheckmark).removeClass('draw').addClass('error').toggle();
                         setTimeout(() => {
@@ -82,6 +84,7 @@ $(() => {
                         }, 1000);
                     }
                 }).done(response => {
+                    getCustomerEventListener().send('pinCode', 'success');
                     renderBarItems();
                     pincodeSound.play();
                     $(pincodeCircle).removeClass('load-error').toggleClass('load-complete');
@@ -101,6 +104,9 @@ $(() => {
         }
     });
 
+    $(pincodeRow).on('show.bs.modal', () => getCustomerEventListener().send('pinCode', 'show'));
+    $(pincodeRow).on('hide.bs.modal', () => getCustomerEventListener().send('pinCode', 'hide'));
+
     getReader().reload();
     getReader().setOnCard(rfid => {
         if (buyPanel.isActive()) {
@@ -118,7 +124,14 @@ $(() => {
             return;
         }
 
-        let value = e.target.value + input;
+        let value = e.target.value;
+        if (input === 'Backspace') {
+            pinCodeBackspace();
+        } else {
+            value = e.target.value + input;
+            getCustomerEventListener().send('pinCodeInput', value);
+        }
+
         if (value.length === 4) {
             pincodeCallback(value);
         }
@@ -131,6 +144,7 @@ $(() => {
         }
 
         pincodeBox.value += e.target.value;
+        getCustomerEventListener().send('pinCodeInput', pincodeBox.value);
         if (pincodeBox.value.length === 4) {
             pincodeCallback(pincodeBox.value);
         }
@@ -181,4 +195,15 @@ function getSaleByCardType(sales, cardType) {
 function pinCodeBackspace() {
     let len = pincodeBox.value.length;
     pincodeBox.value = pincodeBox.value.substring(0, len - 1);
+    getCustomerEventListener().send('pinCodeInput', pincodeBox.value);
+}
+
+function clearPinCode() {
+    pincodeBox.value = '';
+    getCustomerEventListener().send('pinCodeInput', pincodeBox.value);
+}
+
+function addNumber(num) {
+    pincodeBox.value += num;
+    getCustomerEventListener().send('pinCodeInput', pincodeBox.value);
 }

@@ -8,6 +8,10 @@ const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modalTitle');
 const modalHeader = document.getElementById('modalHeader');
 const modalBody = document.getElementById('modalBody');
+const pincodeRow = document.getElementById('pincodeRow');
+const pinPasswordInput = document.querySelector('#pinPasswordInput input');
+const pincodeCircle = document.querySelector('#pinPasswordInput div');
+const pinCodeCheckmark = pincodeCircle.querySelector('.checkmark');
 const waitingClientModal = {
     title: false,
     body: `
@@ -57,6 +61,44 @@ $(() => {
             userBalance.querySelector('.balance-span').style.color = 'unset';
         }
     });
+
+    eventListener.on('pinCode', status => {
+        if (status === 'show') {
+            pinPasswordInput.value = '';
+            pinPasswordInput.hidden = false;
+            pincodeCircle.hidden = true;
+            $(pincodeRow).modal();
+        } else if (status === 'hide') {
+            $(pincodeRow).modal('hide');
+        } else if (status === 'loading') {
+            pinPasswordInput.hidden = true;
+            pincodeCircle.hidden = false;
+        } else if (status === 'success') {
+            $(pincodeCircle).removeClass('load-error').toggleClass('load-complete');
+            $(pinCodeCheckmark).removeClass('error').addClass('draw').toggle();
+            successNoty("Товары были успешны куплены!");
+            setTimeout(() => {
+                $(pincodeRow).modal('hide');
+                pinPasswordInput.value = '';
+                pinPasswordInput.hidden = false;
+                pincodeCircle.hidden = true;
+                $(pincodeCircle).removeClass('load-error').removeClass('load-complete');
+                $(pinCodeCheckmark).removeClass('error').addClass('draw').toggle();
+            }, 1000);
+        } else if (status === 'error') {
+            $(pincodeCircle).removeClass('load-complete').toggleClass('load-error');
+            $(pinCodeCheckmark).removeClass('draw').addClass('error').toggle();
+            setTimeout(() => {
+                pinPasswordInput.value = '';
+                pinPasswordInput.hidden = false;
+                pincodeCircle.hidden = true;
+                $(pincodeCircle).removeClass('load-error').removeClass('load-complete');
+                $(pinCodeCheckmark).removeClass('error').addClass('draw').toggle();
+            }, 1000);
+        }
+    });
+
+    eventListener.on('pinCodeInput', value => pinPasswordInput.value = value);
 });
 
 function renderModal({ title, body }) {
