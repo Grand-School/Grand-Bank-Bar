@@ -13,15 +13,31 @@ const pincodeCircle = document.querySelector('.circle-loader');
 const pincodeCheckmark = document.querySelector('.checkmark');
 const pincodeSound = new Audio('../pincode-succes.mp3');
 let barItemsStorage, buyPanel, creditCards, pincodeCallback = () => {};
+const updateItem = data => getCustomerEventListener().send('itemsUpdate', { itemsHtml: itemsToBuyList.innerHTML, totalPrice: data.totalPrice });
+const getUsersTax = cardType => {
+    for (let card in creditCards) {
+        if (creditCards[card].codeName === cardType) {
+            return creditCards[card].tax.purchase;
+        }
+    }
+    return 0;
+};
 
 $(() => {
+    $.get(serverUrl + 'api/creditcard')
+        .done(response => creditCards = response);
+
     renderBarItems();
 
     buyPanel = new BuyPanel({
         chooseUserRow, itemsToBuy, itemsToBuyList, taxSpan, totalSpan, withdrawSpan, userName, userBalance,
         taxTypePlus: true,
-        customUserParser: user => getCustomerEventListener().send('client', user),
+        customUserParser: user => {
+            user.tax = getUsersTax(user.cardType);
+            getCustomerEventListener().send('client', user);
+        },
         onCancel: () => getCustomerEventListener().send('cancelClient'),
+        onAddItem: updateItem, onRemoveItem: updateItem,
         getUserData: cardNum => $.ajax(serverUrl + 'bar/' + cardNum),
         showDiscount: cardType => {
             for (let itemIndex in barItemsStorage) {
@@ -37,14 +53,7 @@ $(() => {
                 }
             }
         },
-        getUsersTax: cardType => {
-            for (let card in creditCards) {
-                if (creditCards[card].codeName === cardType) {
-                    return creditCards[card].tax.purchase;
-                }
-            }
-            return 0;
-        },
+        getUsersTax,
         onBuy: data => {
             $(pincodeBox).on('shown.bs.modal', function focus() {
                 $(pincodeBox).off('shown.bs.modal', focus);

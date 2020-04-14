@@ -1,5 +1,5 @@
 class BuyPanel {
-    constructor({ chooseUserRow, itemsToBuy, itemsToBuyList, getUserData, userName, userBalance, taxSpan, totalSpan, withdrawSpan, showDiscount, onBuy, getUsersTax, taxTypePlus, customUserParser = () => {}, onCancel = () => {} }) {
+    constructor({ chooseUserRow, itemsToBuy, itemsToBuyList, getUserData, userName, userBalance, taxSpan, totalSpan, withdrawSpan, showDiscount, onBuy, getUsersTax, taxTypePlus, customUserParser = () => {}, onCancel = () => {}, onAddItem = () => {}, onRemoveItem = () => {} }) {
         this._chooseUserRow = chooseUserRow;
         this._creditCardInput = this._chooseUserRow.querySelector('.credit-card-input');
         this._nameSurnameInput = this._chooseUserRow.querySelector('.name-surname-input');
@@ -18,6 +18,8 @@ class BuyPanel {
         this._taxTypePlus = taxTypePlus;
         this._customUserParser = customUserParser;
         this._onCancel = onCancel;
+        this._onAddItem = onAddItem;
+        this._onRemoveItem = onRemoveItem;
 
         this._rowHideAble = false;
         this._selectedUser = null;
@@ -114,7 +116,8 @@ class BuyPanel {
             itemToBuyButton.dataset.count = count - 1;
             itemToBuyButton.textContent = count - 1;
 
-            this._updatePrice();
+            let data = this._updatePrice();
+            this._onRemoveItem(data);
         });
     }
 
@@ -165,7 +168,8 @@ class BuyPanel {
             `);
         }
 
-        this._updatePrice();
+        let data = this._updatePrice();
+        this._onAddItem(data);
     }
 
     parseUser(user) {
@@ -215,6 +219,7 @@ class BuyPanel {
         if (this._userBalance !== undefined) {
             this._userBalance.style.color = this._selectedUser.balance - totalPrice < 0 ? 'red' : 'black';
         }
+        return buyData;
     }
 
     _getBuyData() {
