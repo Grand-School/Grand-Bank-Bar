@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grand Bank Bar</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../../node_modules/noty/lib/noty.css">
+
+    <script src="../../../node_modules/popper.js/dist/umd/popper.js"></script>
+    <script src="../../../dist/typeahead.js"></script>
+    <script src="../script.js" defer></script>
+    <script src="customer.js" defer></script>
+</head>
+<body>
+<div class="container-fluid">
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1 id="userName"></h1>
+                    <h3 id="userBalance"></h3>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" tabindex="-1" id="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" id="modalHeader">
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                </div>
+                <div class="modal-body mb-3" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

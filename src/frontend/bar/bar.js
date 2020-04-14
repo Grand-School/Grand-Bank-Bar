@@ -20,6 +20,8 @@ $(() => {
     buyPanel = new BuyPanel({
         chooseUserRow, itemsToBuy, itemsToBuyList, taxSpan, totalSpan, withdrawSpan, userName, userBalance,
         taxTypePlus: true,
+        customUserParser: user => getCustomerEventListener().send('client', user),
+        onCancel: () => getCustomerEventListener().send('cancelClient'),
         getUserData: cardNum => $.ajax(serverUrl + 'bar/' + cardNum),
         showDiscount: cardType => {
             for (let itemIndex in barItemsStorage) {

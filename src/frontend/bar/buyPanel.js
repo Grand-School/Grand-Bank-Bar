@@ -1,5 +1,5 @@
 class BuyPanel {
-    constructor({ chooseUserRow, itemsToBuy, itemsToBuyList, getUserData, userName, userBalance, taxSpan, totalSpan, withdrawSpan, showDiscount, onBuy, getUsersTax, taxTypePlus }) {
+    constructor({ chooseUserRow, itemsToBuy, itemsToBuyList, getUserData, userName, userBalance, taxSpan, totalSpan, withdrawSpan, showDiscount, onBuy, getUsersTax, taxTypePlus, customUserParser = () => {}, onCancel = () => {} }) {
         this._chooseUserRow = chooseUserRow;
         this._creditCardInput = this._chooseUserRow.querySelector('.credit-card-input');
         this._nameSurnameInput = this._chooseUserRow.querySelector('.name-surname-input');
@@ -16,6 +16,8 @@ class BuyPanel {
         this._onBuy = onBuy;
         this._getUsersTax = getUsersTax;
         this._taxTypePlus = taxTypePlus;
+        this._customUserParser = customUserParser;
+        this._onCancel = onCancel;
 
         this._rowHideAble = false;
         this._selectedUser = null;
@@ -134,6 +136,7 @@ class BuyPanel {
         $(this._chooseUserRow).modal();
         setTimeout(() => this._creditCardInput.focus(), 500);
         this._selectedUser = null;
+        this._onCancel();
     }
 
     addItem({ id, name, price, discount }) {
@@ -194,6 +197,8 @@ class BuyPanel {
             count.dataset.count = 0;
             count.textContent = 0;
         }
+
+        this._customUserParser(user);
     }
 
     isActive() {

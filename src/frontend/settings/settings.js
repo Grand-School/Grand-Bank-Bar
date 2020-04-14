@@ -7,6 +7,7 @@ const port = document.getElementById('port');
 const logoutButton = document.getElementById('logoutButton');
 const settingsRow = document.getElementById('settingsRow');
 const fullscreen = document.getElementById('fullscreen');
+const customerWindow = document.getElementById('customerWindow');
 let hideable = false;
 
 $(() => {
@@ -17,6 +18,7 @@ $(() => {
     serverInput.value = settings.get('server_url', '');
     jwtPrefixInput.value = settings.get('jwt_prefix', '');
     port.value = settings.get('port', '');
+    customerWindow.checked = settings.get('customer_window', false);
 
     fullscreen.querySelector(`option[value="${settings.get('fullscreen_app', 'false')}"]`).selected = true;
 
@@ -36,7 +38,8 @@ $(() => {
         if (port.value !== '') {
             settings.set('port', port.value);
         }
-        settings.set('fullscreen_app', fullscreen.value);
+        settings.set('customer_window', customerWindow.checked);
+        settings.set('fullscreen_app', fullscreen.value === 'true');
 
         loadSettings(deskWindow);
 
