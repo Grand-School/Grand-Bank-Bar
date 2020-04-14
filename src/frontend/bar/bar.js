@@ -154,6 +154,7 @@ $(() => {
 function renderBarItems() {
     $.get(serverUrl + 'bar/items?shown=true')
         .done(response => {
+            getCustomerEventListener().send('items', response);
             barItemsStorage = response;
             itemsToBuy.innerHTML = '';
             response.forEach(item => {

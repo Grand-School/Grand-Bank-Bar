@@ -341,3 +341,10 @@
 .item-select-count[data-count="0"] {
     display: none;
 }
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 20px;
+    width: 100%;
+}

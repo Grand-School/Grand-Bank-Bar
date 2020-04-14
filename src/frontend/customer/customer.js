@@ -4,6 +4,10 @@ const itemsToBuyList = document.getElementById('itemsToBuyList');
 const totalSum = document.getElementById('totalSum');
 const taxSpan = document.getElementById('taxSpan');
 const withdraw = document.getElementById('withdraw');
+const footer = document.getElementById('footer');
+const barItemsList = document.getElementById('barItemsList');
+const swiperEl = document.getElementById('swiper');
+const swiperPagination = swiperEl.querySelector('.swiper-pagination');
 const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modalTitle');
 const modalHeader = document.getElementById('modalHeader');
@@ -20,13 +24,31 @@ const waitingClientModal = {
         </div>
     `
 };
-let modalShown = false;
+let modalShown = false, swiper = null;
 
 $(() => {
+    $(modal).on('show.bs.modal', () => {
+        moveModalBackground(modal);
+    });
+    $(pincodeRow).on('show.bs.modal', () => {
+        moveModalBackground(pincodeRow);
+    });
     $(modal).on('hidden.bs.modal', () => modalShown = false);
     renderModal(waitingClientModal);
 
     let eventListener = getCustomerEventListener();
+
+    swiper = new Swiper(swiperEl, {
+        spaceBetween: 30,
+        centeredSlides: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: swiperPagination
+        }
+    });
 
     eventListener.on('client', client => {
         $(modal).modal('hide');
@@ -99,6 +121,47 @@ $(() => {
     });
 
     eventListener.on('pinCodeInput', value => pinPasswordInput.value = value);
+
+    eventListener.on('items', items => {
+        swiper.autoplay.stop();
+        barItemsList.innerHTML = '';
+        let currentElement;
+
+        for (let i = 0; i < items.length; i++) {
+            if (i % 8 === 0) {
+                barItemsList.insertAdjacentHTML('beforeend', '<div class="swiper-slide row" style="justify-content: center;"></div>');
+                currentElement = barItemsList.querySelector('.swiper-slide:last-child');
+            }
+
+            let item = items[i];
+            let img = item.hasImage ? `<img src="${serverUrl}bar/items/${item.id}/image" class="card-img-top" alt="">` : '';
+            currentElement.insertAdjacentHTML('beforeend', `
+                <div class="col-sm-1 mb-2 bar-item">
+                    <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
+                        ${img}
+                        <div class="card-body text-center">
+                            <h5 class="card-title">
+                                ${item.name}
+                                <span class="badge badge-primary badge-pill item-select-count" data-count="0">0</span>
+                            </h5>
+                            <div>
+                                <span>${item.price} грандиков</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            if (img !== '') {
+                currentElement.querySelector('.bar-item:last-child img')
+                    .addEventListener('load', e => moveModalBackground());
+            }
+        }
+
+        swiper.update();
+        swiper.autoplay.start();
+        moveModalBackground();
+    });
 });
 
 function renderModal({ title, body }) {
@@ -114,4 +177,11 @@ function renderModal({ title, body }) {
         $(modal).modal();
         modalShown = true;
     }
+}
+
+function moveModalBackground() {
+    let offsetHeight = `-${footer.offsetHeight + 3}px`;
+    setTimeout(() => {
+        $('.modal-backdrop').css({ top: offsetHeight });
+    }, 40);
 }
