@@ -115,6 +115,18 @@ $(() => {
     $(pincodeRow).on('show.bs.modal', () => getCustomerEventListener().send('pinCode', 'show'));
     $(pincodeRow).on('hide.bs.modal', () => getCustomerEventListener().send('pinCode', 'hide'));
 
+    const nameSurnameInput = chooseUserRow.querySelector('.name-surname-input');
+    nameSurnameInput.addEventListener('input', e =>
+        getCustomerEventListener().send('userType', { type: 'text', value: nameSurnameInput.value }));
+    nameSurnameInput.addEventListener('focusout', e =>
+        getCustomerEventListener().send('userType', { type: 'focusOut' }));
+
+    const creditCardInput = chooseUserRow.querySelector('.credit-card-input');
+    creditCardInput.addEventListener('input', e =>
+        getCustomerEventListener().send('userType', { type: 'card', value: creditCardInput.value }));
+    creditCardInput.addEventListener('focusout', e =>
+        getCustomerEventListener().send('userType', { type: 'focusOut' }));
+
     getReader().reload();
     getReader().setOnCard(rfid => {
         if (buyPanel.isActive()) {

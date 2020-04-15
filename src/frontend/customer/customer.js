@@ -11,30 +11,22 @@ const barItemsList = document.getElementById('barItemsList');
 const swiperEl = document.getElementById('swiper');
 const swiperPagination = swiperEl.querySelector('.swiper-pagination');
 const modal = document.getElementById('modal');
-const modalTitle = document.getElementById('modalTitle');
-const modalHeader = document.getElementById('modalHeader');
 const modalBody = document.getElementById('modalBody');
+const modalBody2 = document.getElementById('modalBody2');
 const pincodeRow = document.getElementById('pincodeRow');
 const pinPasswordInput = document.querySelector('#pinPasswordInput input');
 const pincodeCircle = document.querySelector('#pinPasswordInput div');
 const pinCodeCheckmark = pincodeCircle.querySelector('.checkmark');
-const waitingClientModal = {
-    title: false,
-    body: `
-        <div class="text-center" style="padding-bottom: 40px; padding-top: 40px;">
-            <h3>Ожидание клиента</h3>
-        </div>
-    `
-};
-let modalShown = false, swiper = null;
+const waitingClientModal = `
+    <div class="text-center"  style="padding-bottom: 40px; padding-top: 40px;">
+        <h3>Ожидание клиента</h3>
+    </div>
+`;
+let modalShown = false, swiper = null, currentModalBody = null;
 
 $(() => {
-    $(modal).on('show.bs.modal', () => {
-        moveModalBackground(modal);
-    });
-    $(pincodeRow).on('show.bs.modal', () => {
-        moveModalBackground(pincodeRow);
-    });
+    $(modal).on('show.bs.modal', () => moveModalBackground(modal));
+    $(pincodeRow).on('show.bs.modal', () => moveModalBackground(pincodeRow));
     $(modal).on('hidden.bs.modal', () => modalShown = false);
     renderModal(waitingClientModal);
 
@@ -54,6 +46,7 @@ $(() => {
 
     eventListener.on('client', client => {
         $(modal).modal('hide');
+        modalShown = false;
         userBalance.innerHTML = `Баланс: <span class="balance-span">${client.balance} грандик(ов)</span>`;
         userBalance.dataset.balance = client.balance;
         userName.textContent = showUserData(client);
@@ -168,16 +161,53 @@ $(() => {
         swiper.autoplay.start();
         moveModalBackground();
     });
+
+    let lastType, timeout;
+    eventListener.on('userType', ({ type, value }) => {
+        if (type === 'focusOut' && modalShown) {
+            renderModal(waitingClientModal);
+        } else if (lastType === type && (type === 'text' || type === 'card')) {
+            if (currentModalBody !== null) {
+                let input = currentModalBody.querySelector('input');
+                if (input !== null) {
+                    input.value = value
+                }
+            }
+
+            updateTimeout();
+        } else {
+            renderModal(`
+                <div class="center" style="flex-flow: row wrap; height: 100%;">
+                    <span class="text-muted">Поиск по ${type === 'text' ? 'имени/фамиилии' : 'номеру карты'}</span>
+                    <div class="center">
+                        <input type="text" class="beautiful-input" style="width: 100%" value="${value}">
+                    </div>
+                </div>
+            `);
+            updateTimeout();
+        }
+
+        lastType = type;
+
+        function updateTimeout() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                lastType = null;
+                renderModal(waitingClientModal);
+            }, 5000);
+        }
+    });
 });
 
-function renderModal({ title, body }) {
-    if (title === false) {
-        modalHeader.hidden = true;
-    } else {
-        modalTitle.textContent = title;
-        modalHeader.hidden = false;
-    }
-    modalBody.innerHTML = body;
+function renderModal(body) {
+    let firstElement = modalBody.style.display === 'none' ? modalBody : modalBody2;
+    let secondElement = modalBody.style.display === 'none' ? modalBody2 : modalBody;
+
+    $(secondElement).fadeOut();
+
+    firstElement.innerHTML = body;
+    currentModalBody = firstElement;
+    $(firstElement).fadeIn();
 
     if (!modalShown) {
         $(modal).modal();
