@@ -8,6 +8,7 @@ const taxSpan = document.getElementById('taxSpan');
 const withdraw = document.getElementById('withdraw');
 const footer = document.getElementById('footer');
 const barItemsList = document.getElementById('barItemsList');
+const userSales = document.getElementById('userSales');
 const swiperEl = document.getElementById('swiper');
 const swiperPagination = swiperEl.querySelector('.swiper-pagination');
 const modal = document.getElementById('modal');
@@ -22,10 +23,13 @@ const waitingClientModal = `
         <h3>Ожидание клиента</h3>
     </div>
 `;
-let modalShown = false, swiper = null, currentModalBody = null;
+let modalShown = false, swiper = null, currentModalBody = null, itemsStorage = null;
 
 $(() => {
-    $(modal).on('show.bs.modal', () => moveModalBackground(modal));
+    $(modal).on('show.bs.modal', () => {
+        modalShown = true;
+        moveModalBackground(modal);
+    });
     $(pincodeRow).on('show.bs.modal', () => moveModalBackground(pincodeRow));
     $(modal).on('hidden.bs.modal', () => modalShown = false);
     renderModal(waitingClientModal);
@@ -46,7 +50,6 @@ $(() => {
 
     eventListener.on('client', client => {
         $(modal).modal('hide');
-        modalShown = false;
         userBalance.innerHTML = `Баланс: <span class="balance-span">${client.balance} грандик(ов)</span>`;
         userBalance.dataset.balance = client.balance;
         userName.textContent = showUserData(client);
@@ -56,6 +59,38 @@ $(() => {
         taxSpan.dataset.tax = client.tax;
         totalSum.textContent = 'Всего: 0 грандиков';
         withdraw.textContent = 'К снятию: 0 грандиков';
+
+        let sales = itemsStorage.reduce((acc, item) => {
+            let sales = item.sales.filter(item => item.cardType === 'default');
+            if (sales.length > 0) {
+                let sale = sales[0];
+                sale.barItem = item;
+                acc.push(sale);
+            }
+            return acc;
+        }, []);
+        if (sales.length !== 0) {
+            userSales.hidden = false;
+            userSales.querySelector('div').innerHTML = sales.reduce((acc, item) => {
+                let price = item.barItem.price - (item.barItem.price * item.percent / 100);
+                return acc += `
+                    <div class="mr-1 mb-2 bar-item">
+                        <div class="card" style="width: 9rem;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    ${item.barItem.name}
+                                </h5>
+                                <div>
+                                    <small style="text-decoration: line-through;">${item.barItem.price} грандиков</small><br>
+                                    <span>${price} грандиков</span><br>
+                                    <small>Скидка: ${item.percent}%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }, '');
+        }
     });
 
     eventListener.on('cancelClient', () => {
@@ -68,6 +103,7 @@ $(() => {
         totalSum.textContent = '';
         taxSpan.textContent = '';
         withdraw.textContent = '';
+        userSales.hidden = true;
     });
 
     eventListener.on('itemsUpdate', ({ itemsHtml, totalPrice }) => {
@@ -122,6 +158,7 @@ $(() => {
     eventListener.on('pinCodeInput', value => pinPasswordInput.value = value);
 
     eventListener.on('items', items => {
+        itemsStorage = items;
         swiper.autoplay.stop();
         barItemsList.innerHTML = '';
         let currentElement;
@@ -193,7 +230,9 @@ $(() => {
             clearTimeout(timeout);
             timeout = setTimeout(() => {
                 lastType = null;
-                renderModal(waitingClientModal);
+                if (modalShown) {
+                    renderModal(waitingClientModal);
+                }
             }, 5000);
         }
     });
@@ -211,7 +250,6 @@ function renderModal(body) {
 
     if (!modalShown) {
         $(modal).modal();
-        modalShown = true;
     }
 }
 

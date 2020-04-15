@@ -63,8 +63,8 @@ $(() => {
             return 0;
         },
         onBuy: data => {
-            $(pincodeBox).on('shown.bs.modal', function focus() {
-                $(pincodeBox).off('shown.bs.modal', focus);
+            $(pincodeRow).on('shown.bs.modal', function focus() {
+                $(pincodeRow).off('shown.bs.modal', focus);
                 pincodeBox.focus();
             });
             $(pincodeRow).modal();
