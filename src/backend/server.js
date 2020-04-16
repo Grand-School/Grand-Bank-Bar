@@ -20,8 +20,8 @@ function loadServer(settings) {
 
     app.post('', (req, resp) => {
         let headerName = appSettings.get('jwt_prefix', 'Authorization');
-        let token = req.headers[headerName.toLowerCase()];
-        settings.token({ token, user: req.body })
+        let jwt = req.headers[headerName.toLowerCase()];
+        settings.token({ jwt, profile: req.body });
     });
     app.get('/server', (req, resp) => resp.send(settings.server));
 

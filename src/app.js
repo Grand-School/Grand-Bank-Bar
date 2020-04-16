@@ -3,20 +3,17 @@ const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { CustomerEventListener } = require('./backend/customerEventListener');
 const { Reader } = require('./backend/reader');
-let userJwt = null, reader = new Reader(), profile = null, customerWindow = null, window;
+let reader = new Reader(), customerWindow = null, user = null, window;
 let customerEventListener = new CustomerEventListener();
 
-exports.getJwt = () => userJwt;
-exports.getReader = () => reader;
-exports.getCustomerEventListener = () => customerEventListener;
-exports.setReader = port => reader.loadPort(port);
-exports.loadSettings = loadSettings;
-exports.logout = () => {
-    userJwt = null;
-    loadMenu(window);
-    window.loadURL('http://localhost:3000')
-        .then(() => window.show());
+module.exports = {
+    isLoggedIn: () => user !== null,
+    getJwt: () => user.jwt,
+    getReader: () => reader,
+    getCustomerEventListener: () => customerEventListener,
+    loadSettings, logout
 };
+
 app.allowRendererProcessReuse = true;
 
 app.whenReady()
@@ -41,16 +38,15 @@ app.whenReady()
                 console.log('Start server on port 3000');
                 serverLoaded();
             },
-            token: ({ token, user }) => {
-                userJwt = token;
-                profile = user;
+            token: ({ jwt, profile }) => {
+                user = { jwt, profile };
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
             },
             server: settings.get('server_url')
         });
 
-        if (userJwt !== null && settings.has('server_url')) {
+        if (user !== null && settings.has('server_url')) {
             window.loadFile('./frontend/bar/bar.html')
                 .then(() => window.show());
         } else {
@@ -68,7 +64,7 @@ app.whenReady()
 
 function loadMenu(window) {
     let menu = new Menu();
-    if (userJwt === null) {
+    if (user === null) {
         menu.append(new MenuItem({
             label: 'Войти',
             click() {
@@ -84,7 +80,7 @@ function loadMenu(window) {
                 .then(() => window.show())
         }
     }));
-    if (userJwt !== null) {
+    if (user !== null) {
         menu.append(new MenuItem({
             label: 'Бар',
             click() {
@@ -93,13 +89,19 @@ function loadMenu(window) {
             }
         }));
     }
-    if (profile !== null && (profile.role === 'ROLE_ADMIN' || profile.role === 'ROLE_RESPONSIBLE')) {
+    if (user !== null && user.profile !== undefined && (user.profile.role === 'ROLE_ADMIN' || user.profile.role === 'ROLE_RESPONSIBLE')) {
         menu.append(new MenuItem({
             label: 'Пользователи',
             click() {
                 window.loadFile('./frontend/users/users.html')
                     .then(() => window.show())
             }
+        }));
+    }
+    if (user !== null) {
+        menu.append(new MenuItem({
+            label: 'Выйти',
+            click: () => logout()
         }));
     }
     Menu.setApplicationMenu(menu);
@@ -141,4 +143,13 @@ function loadSettings(window) {
             reader.loadPort(port);
         }
     }
+}
+
+function logout() {
+    user = null;
+    window.loadURL('http://localhost:3000')
+        .then(() => {
+            window.show();
+            loadMenu(window);
+        });
 }

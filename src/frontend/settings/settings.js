@@ -43,7 +43,7 @@ $(() => {
         successNoty('Вы успешно сохранили настройки!');
     });
 
-    if (getJwt() !== null) {
+    if (isLoggedIn()) {
         logoutButton.hidden = false;
         logoutButton.addEventListener('click', e => {
             e.preventDefault();
