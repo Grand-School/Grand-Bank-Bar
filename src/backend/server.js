@@ -23,7 +23,6 @@ function loadServer(settings) {
         let token = req.headers[headerName.toLowerCase()];
         settings.token({ token, user: req.body })
     });
-    app.post('/settings', (req, resp) => settings.settings());
     app.get('/server', (req, resp) => resp.send(settings.server));
 
     server.listen(port, () => settings.done());

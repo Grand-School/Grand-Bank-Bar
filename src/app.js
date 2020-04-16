@@ -47,7 +47,6 @@ app.whenReady()
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
             },
-            settings: () => window.loadFile('./frontend/settings/settings.html'),
             server: settings.get('server_url')
         });
 
@@ -69,6 +68,15 @@ app.whenReady()
 
 function loadMenu(window) {
     let menu = new Menu();
+    if (userJwt === null) {
+        menu.append(new MenuItem({
+            label: 'Войти',
+            click() {
+                window.loadURL('http://localhost:3000')
+                    .then(() => window.show());
+            }
+        }));
+    }
     menu.append(new MenuItem({
         label: 'Настройки',
         click() {

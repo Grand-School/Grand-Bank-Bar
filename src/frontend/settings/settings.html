@@ -14,7 +14,7 @@
     <script src="./settings.js" defer></script>
 </head>
 <body>
-<div class="modal fade" tabindex="-1" id="settingsRow">
+<div class="modal fade" tabindex="-1" id="settingsRow" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -47,7 +47,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin: 0;">
                         <input type="checkbox" id="customerWindow" name="customerWindow">
                         <label for="customerWindow">Включить окно покупателя</label>
                         <div class="invalid-feedback" hidden></div>

@@ -11,11 +11,9 @@ const fullscreen = document.getElementById('fullscreen');
 const customerWindow = document.getElementById('customerWindow');
 const consoleButton = document.getElementById('consoleButton');
 const console = document.getElementById('console');
-let hideable = false;
 
 $(() => {
     $(settingsRow).modal();
-    $(settingsRow).on('hide.bs.modal', () => hideable);
     $(settingsRow).modal({ keyboard: false });
 
     serverInput.value = settings.get('server_url', '');
@@ -42,19 +40,7 @@ $(() => {
 
         loadSettings(deskWindow);
 
-        if (getJwt() !== null) {
-            successNoty('Вы успешно сохранили настройки!');
-            return;
-        }
-
-        hideable = true;
-        $(settingsRow).modal('hide');
-
-        if (settings.has('jwt')) {
-            deskWindow.loadFile('../bar/bar.html');
-        } else {
-            deskWindow.loadURL('http://localhost:3000');
-        }
+        successNoty('Вы успешно сохранили настройки!');
     });
 
     if (getJwt() !== null) {
