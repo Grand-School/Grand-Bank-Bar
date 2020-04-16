@@ -21,6 +21,7 @@ app.whenReady()
     .then(() => {
         window = new BrowserWindow({
             show: false,
+            icon: __dirname + '/icon.ico',
 
             webPreferences: {
                 nodeIntegration: true,
@@ -136,6 +137,7 @@ function loadSettings(window) {
             customerWindow = new BrowserWindow({
                 show: false,
                 autoHideMenuBar: true,
+                icon: __dirname + '/icon.ico',
                 fullscreen, x, y,
                 webPreferences: {
                     nodeIntegration: true,
