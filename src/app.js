@@ -1,4 +1,5 @@
-const { app, BrowserWindow, Menu, MenuItem } = require('electron');
+const electron = require('electron');
+const { app, BrowserWindow, Menu, MenuItem } = electron;
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { CustomerEventListener } = require('./backend/customerEventListener');
@@ -112,24 +113,38 @@ function loadSettings(window) {
     window.setFullScreen(fullscreen);
     window.maximize();
 
+    const screen = electron.screen;
     let useCustomerWindow = settings.get('customer_window', false);
     if (useCustomerWindow) {
+        let displayIndex = settings.get('customer_window_display', 1) - 1;
+        let fullscreen = settings.get('customer_window_fullscreen', false);
+
+        let displays = screen.getAllDisplays();
+        let display = displays[displayIndex];
+
+        let x = display === undefined ? 0 : display.bounds.x;
+        let y = display === undefined ? 0 : display.bounds.y;
+
         if (customerWindow === null) {
             customerWindow = new BrowserWindow({
                 show: false,
                 autoHideMenuBar: true,
-                // fullscreen: true,
+                fullscreen, x, y,
                 webPreferences: {
                     nodeIntegration: true,
                     webSecurity: false
                 }
             });
+
             customerWindow.maximize();
             customerWindow.removeMenu();
             customerWindow.loadFile('./frontend/customer/customer.html')
                 .then(() => customerWindow.show());
             customerWindow.webContents.openDevTools();
         } else {
+            customerWindow.setPosition(x, y);
+            customerWindow.setFullScreen(fullscreen);
+            customerWindow.maximize();
             customerWindow.show();
         }
     } else if (customerWindow !== null) {

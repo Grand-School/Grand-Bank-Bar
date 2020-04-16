@@ -11,6 +11,9 @@ const fullscreen = document.getElementById('fullscreen');
 const customerWindow = document.getElementById('customerWindow');
 const consoleButton = document.getElementById('consoleButton');
 const console = document.getElementById('console');
+const customerWindowDisplay = document.getElementById('customerWindowDisplay');
+const customerWindowSettings = document.getElementById('customerWindowSettings');
+const customerWindowFullscreen = document.getElementById('customerWindowFullscreen');
 
 $(() => {
     $(settingsRow).modal();
@@ -19,7 +22,9 @@ $(() => {
     serverInput.value = settings.get('server_url', '');
     jwtPrefixInput.value = settings.get('jwt_prefix', '');
     port.value = settings.get('port', '');
+    customerWindowDisplay.value = settings.get('customer_window_display', 1);
     customerWindow.checked = settings.get('customer_window', false);
+    customerWindowFullscreen.checked = settings.get('customer_window_fullscreen', false);
 
     fullscreen.querySelector(`option[value="${settings.get('fullscreen_app', 'false')}"]`).selected = true;
 
@@ -35,7 +40,11 @@ $(() => {
         if (port.value !== '') {
             settings.set('port', port.value);
         }
+        if (customerWindowDisplay.value !== '') {
+            settings.set('customer_window_display', +customerWindowDisplay.value);
+        }
         settings.set('customer_window', customerWindow.checked);
+        settings.set('customer_window_fullscreen', customerWindowFullscreen.checked);
         settings.set('fullscreen_app', fullscreen.value === 'true');
 
         loadSettings(deskWindow);
@@ -94,5 +103,10 @@ $(() => {
             consoleButton.removeEventListener('click', hideConsole);
             consoleButton.addEventListener('click', showConsole);
         });
+    });
+
+    customerWindow.addEventListener('click', e => {
+        customerWindowSettings.querySelectorAll('input')
+            .forEach(item => item.disabled = !customerWindow.checked);
     });
 });
