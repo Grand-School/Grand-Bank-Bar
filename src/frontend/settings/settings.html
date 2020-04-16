@@ -22,6 +22,7 @@
             </div>
             <form id="settingsForm">
                 <div class="modal-body mb-3" id="formInputs">
+                    <h5>Общие настройки</h5>
                     <div class="form-group">
                         <label for="serverInput">Сервер</label>
                         <input type="text" name="server" id="serverInput" class="form-control"/>
@@ -48,6 +49,7 @@
                     </div>
 
                     <hr>
+                    <h5>Окно покупателя</h5>
 
                     <div class="form-group" style="margin: 0;">
                         <input type="checkbox" id="customerWindow" name="customerWindow">
@@ -61,10 +63,12 @@
                             <input type="number" name="customerWindowDisplay" id="customerWindowDisplay" class="form-control"/>
                         </div>
 
-                        <div class="form-group" style="margin: 0;">
-                            <input type="checkbox" id="customerWindowFullscreen" name="customerWindowFullscreen">
-                            <label for="customerWindowFullscreen">На весь экран</label>
-                            <div class="invalid-feedback" hidden></div>
+                        <div class="form-group">
+                            <label for="customerWindowFullscreen">Режим отображения</label>
+                            <select class="form-control" name="customerWindowFullscreen" id="customerWindowFullscreen">
+                                <option value="false">В окне</option>
+                                <option value="true">На весь экран</option>
+                            </select>
                         </div>
                     </div>
                 </div>

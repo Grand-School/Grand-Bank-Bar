@@ -24,9 +24,9 @@ $(() => {
     port.value = settings.get('port', '');
     customerWindowDisplay.value = settings.get('customer_window_display', 1);
     customerWindow.checked = settings.get('customer_window', false);
-    customerWindowFullscreen.checked = settings.get('customer_window_fullscreen', false);
 
     fullscreen.querySelector(`option[value="${settings.get('fullscreen_app', 'false')}"]`).selected = true;
+    customerWindowFullscreen.querySelector(`option[value="${settings.get('customer_window_fullscreen', false)}"]`).selected = true;
 
     settingsForm.addEventListener('submit', e => {
         e.preventDefault();
@@ -44,7 +44,7 @@ $(() => {
             settings.set('customer_window_display', +customerWindowDisplay.value);
         }
         settings.set('customer_window', customerWindow.checked);
-        settings.set('customer_window_fullscreen', customerWindowFullscreen.checked);
+        settings.set('customer_window_fullscreen', customerWindowFullscreen.value === 'true');
         settings.set('fullscreen_app', fullscreen.value === 'true');
 
         loadSettings(deskWindow);

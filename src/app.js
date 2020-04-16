@@ -28,8 +28,6 @@ app.whenReady()
             }
         });
 
-        window.webContents.openDevTools();
-
         loadSettings(window);
         loadMenu(window);
 
@@ -149,7 +147,6 @@ function loadSettings(window) {
             customerWindow.removeMenu();
             customerWindow.loadFile('./frontend/customer/customer.html')
                 .then(() => customerWindow.show());
-            customerWindow.webContents.openDevTools();
         } else {
             customerWindow.setPosition(x, y);
             customerWindow.setFullScreen(fullscreen);
