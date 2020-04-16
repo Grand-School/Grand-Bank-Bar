@@ -105,6 +105,15 @@ function loadMenu(window) {
             click: () => logout()
         }));
     }
+    menu.append(new MenuItem({
+        label: 'Завершить',
+        click() {
+            window.close();
+            if (customerWindow) {
+                customerWindow.close();
+            }
+        }
+    }));
     Menu.setApplicationMenu(menu);
 }
 
