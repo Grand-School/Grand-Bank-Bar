@@ -3,13 +3,13 @@ const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { CustomerEventListener } = require('./backend/customerEventListener');
 const { Reader } = require('./backend/reader');
-let userJwt = null, reader = null, profile = null, customerWindow = null, window;
+let userJwt = null, reader = new Reader(), profile = null, customerWindow = null, window;
 let customerEventListener = new CustomerEventListener();
 
 exports.getJwt = () => userJwt;
 exports.getReader = () => reader;
 exports.getCustomerEventListener = () => customerEventListener;
-exports.setReader = port => reader = new Reader(port);
+exports.setReader = port => reader.loadPort(port);
 exports.loadSettings = loadSettings;
 exports.logout = () => {
     userJwt = null;
@@ -18,13 +18,6 @@ exports.logout = () => {
         .then(() => window.show());
 };
 app.allowRendererProcessReuse = true;
-
-if (settings.has('port')) {
-    let port = settings.get('port');
-    if (port !== '') {
-        reader = new Reader(port);
-    }
-}
 
 app.whenReady()
     .then(() => {
@@ -131,5 +124,13 @@ function loadSettings(window) {
         }
     } else if (customerWindow !== null) {
         customerWindow.hide();
+    }
+
+
+    if (settings.has('port')) {
+        let port = settings.get('port');
+        if (port !== '') {
+            reader.loadPort(port);
+        }
     }
 }
