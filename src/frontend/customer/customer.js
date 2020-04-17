@@ -9,6 +9,9 @@ const withdraw = document.getElementById('withdraw');
 const footer = document.getElementById('footer');
 const barItemsList = document.getElementById('barItemsList');
 const userSales = document.getElementById('userSales');
+const userSalesList = document.getElementById('userSalesList');
+const salesSwiper = document.getElementById('salesSwiper');
+const salesSwiperPagination = salesSwiper.querySelector('.swiper-pagination');
 const swiperEl = document.getElementById('swiper');
 const swiperPagination = swiperEl.querySelector('.swiper-pagination');
 const modal = document.getElementById('modal');
@@ -23,7 +26,7 @@ const waitingClientModal = `
         <h3>Ожидание клиента</h3>
     </div>
 `;
-let modalShown = false, swiper = null, currentModalBody = null, itemsStorage = null;
+let modalShown = false, swiper = null, userSalesSwiper = null, currentModalBody = null, itemsStorage = null;
 
 $(() => {
     $(modal).on('show.bs.modal', () => {
@@ -45,6 +48,18 @@ $(() => {
         },
         pagination: {
             el: swiperPagination
+        }
+    });
+
+    userSalesSwiper = new Swiper(salesSwiper, {
+        spaceBetween: 30,
+        centeredSlides: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: salesSwiperPagination
         }
     });
 
@@ -71,25 +86,34 @@ $(() => {
         }, []);
         if (sales.length !== 0) {
             userSales.hidden = false;
-            userSales.querySelector('div').innerHTML = sales.reduce((acc, item) => {
+            userSalesSwiper.autoplay.stop();
+            userSalesList.innerHTML = '';
+
+            let currentElement;
+            for (let i = 0; i < sales.length; i++) {
+                if (i % 5 === 0) {
+                    userSalesList.insertAdjacentHTML('beforeend', '<div class="swiper-slide row" style="justify-content: center;"></div>');
+                    currentElement = userSalesList.querySelector('.swiper-slide:last-child');
+                }
+
+                let item = sales[i];
                 let price = item.barItem.price - (item.barItem.price * item.percent / 100);
-                return acc += `
-                    <div class="mr-1 mb-2 bar-item">
-                        <div class="card" style="width: 9rem;">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">
-                                    ${item.barItem.name}
-                                </h5>
-                                <div>
-                                    <small style="text-decoration: line-through;">${item.barItem.price} грандиков</small><br>
-                                    <span>${price} грандиков</span><br>
-                                    <small>Скидка: ${item.percent}%</small>
-                                </div>
+                currentElement.insertAdjacentHTML('beforeend', `
+                    <div class="card mr-1" style="width: 9rem;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">${item.barItem.name}</h5>
+                            <div>
+                                <small style="text-decoration: line-through;">${item.barItem.price} грандиков</small><br>
+                                <span>${price} грандиков</span><br>
+                                <small>Скидка: ${item.percent}%</small>
                             </div>
                         </div>
                     </div>
-                `;
-            }, '');
+                `);
+            }
+
+            userSalesSwiper.update();
+            userSalesSwiper.autoplay.start();
         } else {
             userSales.hidden = true;
         }
