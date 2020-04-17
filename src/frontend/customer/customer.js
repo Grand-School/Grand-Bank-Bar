@@ -61,7 +61,7 @@ $(() => {
         withdraw.textContent = 'К снятию: 0 грандиков';
 
         let sales = itemsStorage.reduce((acc, item) => {
-            let sales = item.sales.filter(item => item.cardType === 'default');
+            let sales = item.sales.filter(item => item.cardType === client.cardType);
             if (sales.length > 0) {
                 let sale = sales[0];
                 sale.barItem = item;
@@ -90,6 +90,8 @@ $(() => {
                     </div>
                 `;
             }, '');
+        } else {
+            userSales.hidden = true;
         }
     });
 

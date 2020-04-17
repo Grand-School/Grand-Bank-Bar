@@ -106,12 +106,7 @@ function loadMenu(window) {
     }
     menu.append(new MenuItem({
         label: 'Завершить',
-        click() {
-            window.close();
-            if (customerWindow) {
-                customerWindow.close();
-            }
-        }
+        click: () => app.quit()
     }));
     Menu.setApplicationMenu(menu);
 }
