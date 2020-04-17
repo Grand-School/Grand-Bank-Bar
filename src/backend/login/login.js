@@ -1,10 +1,8 @@
 const loginForm = document.getElementById('loginForm');
-const updateSettingsButton = document.getElementById('updateSettingsButton');
 const loginRow = document.getElementById('loginRow');
-let currentServer, loginRowHideAble = false;
+let currentServer;
 
 $(() => {
-    $(loginRow).on('hide.bs.modal', e => loginRowHideAble);
     $(loginRow).modal();
 
     $.loadScript = function (url, callback) {
@@ -51,7 +49,6 @@ $(() => {
                 return;
             }
 
-            loginRowHideAble = true;
             $(loginRow).modal('hide');
 
             let headers = {};
@@ -70,15 +67,5 @@ $(() => {
                 });
             });
         }
-    });
-
-    updateSettingsButton.addEventListener('click', e => {
-        e.preventDefault();
-        loginRowHideAble = true;
-        $(loginRow).modal('hide');
-        $.ajax({
-            method: 'POST',
-            url: '/settings'
-        });
     });
 });

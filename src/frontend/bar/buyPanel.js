@@ -1,5 +1,5 @@
 class BuyPanel {
-    constructor({ chooseUserRow, itemsToBuy, itemsToBuyList, getUserData, userName, userBalance, taxSpan, totalSpan, withdrawSpan, showDiscount, onBuy, getUsersTax, taxTypePlus }) {
+    constructor({ chooseUserRow, itemsToBuy, itemsToBuyList, getUserData, userName, userBalance, taxSpan, totalSpan, withdrawSpan, showDiscount, onBuy, getUsersTax, taxTypePlus, customUserParser = () => {}, onCancel = () => {}, onAddItem = () => {}, onRemoveItem = () => {} }) {
         this._chooseUserRow = chooseUserRow;
         this._creditCardInput = this._chooseUserRow.querySelector('.credit-card-input');
         this._nameSurnameInput = this._chooseUserRow.querySelector('.name-surname-input');
@@ -16,6 +16,10 @@ class BuyPanel {
         this._onBuy = onBuy;
         this._getUsersTax = getUsersTax;
         this._taxTypePlus = taxTypePlus;
+        this._customUserParser = customUserParser;
+        this._onCancel = onCancel;
+        this._onAddItem = onAddItem;
+        this._onRemoveItem = onRemoveItem;
 
         this._rowHideAble = false;
         this._selectedUser = null;
@@ -112,7 +116,8 @@ class BuyPanel {
             itemToBuyButton.dataset.count = count - 1;
             itemToBuyButton.textContent = count - 1;
 
-            this._updatePrice();
+            let data = this._updatePrice();
+            this._onRemoveItem(data);
         });
     }
 
@@ -134,6 +139,7 @@ class BuyPanel {
         $(this._chooseUserRow).modal();
         setTimeout(() => this._creditCardInput.focus(), 500);
         this._selectedUser = null;
+        this._onCancel();
     }
 
     addItem({ id, name, price, discount }) {
@@ -162,7 +168,8 @@ class BuyPanel {
             `);
         }
 
-        this._updatePrice();
+        let data = this._updatePrice();
+        this._onAddItem(data);
     }
 
     parseUser(user) {
@@ -175,7 +182,8 @@ class BuyPanel {
         this._taxSpan.textContent = 'Налог: ' + tax + '%';
         this._taxSpan.dataset.tax = tax;
         this._itemsToBuyList.innerHTML = '';
-        this._totalSpan.textContent = 'Всего: 0';
+        this._totalSpan.textContent = 'Всего: 0 грандиков';
+        this._withdrawSpan.textContent = 'К снятию: 0 грандиков';
 
         this._rowHideAble = true;
         $(this._chooseUserRow).modal('hide');
@@ -194,6 +202,8 @@ class BuyPanel {
             count.dataset.count = 0;
             count.textContent = 0;
         }
+
+        this._customUserParser(user);
     }
 
     isActive() {
@@ -204,12 +214,13 @@ class BuyPanel {
         let buyData = this._getBuyData();
         let totalPrice = buyData.totalPrice;
         let tax = +this._taxSpan.dataset.tax;
-        this._totalSpan.textContent = 'Всего: ' + totalPrice;
+        this._totalSpan.textContent = `Всего: ${totalPrice} грандиков`;
         let taxSum = totalPrice * tax / 100;
-        this._withdrawSpan.textContent = `${this._taxTypePlus ? 'К снятию' : 'Чистая прибыль'}: ${this._taxTypePlus ? totalPrice + taxSum : totalPrice - taxSum}`;
+        this._withdrawSpan.textContent = `${this._taxTypePlus ? 'К снятию' : 'Чистая прибыль'}: ${this._taxTypePlus ? totalPrice + taxSum : totalPrice - taxSum} грандиков`;
         if (this._userBalance !== undefined) {
             this._userBalance.style.color = this._selectedUser.balance - totalPrice < 0 ? 'red' : 'black';
         }
+        return buyData;
     }
 
     _getBuyData() {

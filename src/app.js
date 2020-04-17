@@ -1,40 +1,33 @@
-const { app, BrowserWindow, Menu, MenuItem, LoadFileOptions } = require('electron');
+const electron = require('electron');
+const { app, BrowserWindow, Menu, MenuItem } = electron;
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
+const { CustomerEventListener } = require('./backend/customerEventListener');
 const { Reader } = require('./backend/reader');
-let userJwt = null, reader = null, profile = null, window;
+let reader = new Reader(), customerWindow = null, user = null, window;
+let customerEventListener = new CustomerEventListener();
 
-exports.getJwt = () => userJwt;
-exports.getReader = () => reader;
-exports.setReader = port => reader = new Reader(port);
-exports.loadSettings = loadSettings;
-exports.logout = () => {
-    userJwt = null;
-    loadMenu(window);
-    window.loadURL('http://localhost:3000')
-        .then(() => window.show());
+module.exports = {
+    isLoggedIn: () => user !== null,
+    getJwt: () => user.jwt,
+    getReader: () => reader,
+    getCustomerEventListener: () => customerEventListener,
+    loadSettings, logout
 };
-app.allowRendererProcessReuse = true;
 
-if (settings.has('port')) {
-    let port = settings.get('port');
-    if (port !== '') {
-        reader = new Reader(port);
-    }
-}
+app.allowRendererProcessReuse = true;
 
 app.whenReady()
     .then(() => {
         window = new BrowserWindow({
             show: false,
+            icon: __dirname + '/icon.ico',
 
             webPreferences: {
                 nodeIntegration: true,
                 webSecurity: false
             }
         });
-
-        window.webContents.openDevTools();
 
         loadSettings(window);
         loadMenu(window);
@@ -45,17 +38,15 @@ app.whenReady()
                 console.log('Start server on port 3000');
                 serverLoaded();
             },
-            token: ({ token, user }) => {
-                userJwt = token;
-                profile = user;
+            token: ({ jwt, profile }) => {
+                user = { jwt, profile };
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
             },
-            settings: () => window.loadFile('./frontend/settings/settings.html'),
             server: settings.get('server_url')
         });
 
-        if (userJwt !== null && settings.has('server_url')) {
+        if (user !== null && settings.has('server_url')) {
             window.loadFile('./frontend/bar/bar.html')
                 .then(() => window.show());
         } else {
@@ -73,36 +64,110 @@ app.whenReady()
 
 function loadMenu(window) {
     let menu = new Menu();
+    if (user === null) {
+        menu.append(new MenuItem({
+            label: 'Войти',
+            click() {
+                window.loadURL('http://localhost:3000')
+                    .then(() => window.show());
+            }
+        }));
+    }
     menu.append(new MenuItem({
         label: 'Настройки',
         click() {
-            window.loadFile('./frontend/settings/settings.html', )
+            window.loadFile('./frontend/settings/settings.html')
                 .then(() => window.show())
         }
     }));
-    if (userJwt !== null) {
+    if (user !== null) {
         menu.append(new MenuItem({
             label: 'Бар',
             click() {
-                window.loadFile('./frontend/bar/bar.html', )
+                window.loadFile('./frontend/bar/bar.html')
                     .then(() => window.show())
             }
         }));
     }
-    if (profile !== null && (profile.role === 'ROLE_ADMIN' || profile.role === 'ROLE_RESPONSIBLE')) {
+    if (user !== null && user.profile !== undefined && (user.profile.role === 'ROLE_ADMIN' || user.profile.role === 'ROLE_RESPONSIBLE')) {
         menu.append(new MenuItem({
             label: 'Пользователи',
             click() {
-                window.loadFile('./frontend/users/users.html', )
+                window.loadFile('./frontend/users/users.html')
                     .then(() => window.show())
             }
         }));
     }
+    if (user !== null) {
+        menu.append(new MenuItem({
+            label: 'Выйти',
+            click: () => logout()
+        }));
+    }
+    menu.append(new MenuItem({
+        label: 'Завершить',
+        click: () => app.quit()
+    }));
     Menu.setApplicationMenu(menu);
 }
 
 function loadSettings(window) {
-    let fullscreen = settings.get('fullscreen_app', 'false') === 'true';
+    let fullscreen = settings.get('fullscreen_app', false);
     window.setFullScreen(fullscreen);
     window.maximize();
+
+    const screen = electron.screen;
+    let useCustomerWindow = settings.get('customer_window', false);
+    if (useCustomerWindow) {
+        let displayIndex = settings.get('customer_window_display', 1) - 1;
+        let fullscreen = settings.get('customer_window_fullscreen', false);
+
+        let displays = screen.getAllDisplays();
+        let display = displays[displayIndex];
+
+        let x = display === undefined ? 0 : display.bounds.x;
+        let y = display === undefined ? 0 : display.bounds.y;
+
+        if (customerWindow === null) {
+            customerWindow = new BrowserWindow({
+                show: false,
+                autoHideMenuBar: true,
+                icon: __dirname + '/icon.ico',
+                fullscreen, x, y,
+                webPreferences: {
+                    nodeIntegration: true,
+                    webSecurity: false
+                }
+            });
+
+            customerWindow.maximize();
+            customerWindow.removeMenu();
+            customerWindow.loadFile('./frontend/customer/customer.html')
+                .then(() => customerWindow.show());
+        } else {
+            customerWindow.setPosition(x, y);
+            customerWindow.setFullScreen(fullscreen);
+            customerWindow.maximize();
+            customerWindow.show();
+        }
+    } else if (customerWindow !== null) {
+        customerWindow.hide();
+    }
+
+
+    if (settings.has('port')) {
+        let port = settings.get('port');
+        if (port !== '') {
+            reader.loadPort(port);
+        }
+    }
+}
+
+function logout() {
+    user = null;
+    window.loadURL('http://localhost:3000')
+        .then(() => {
+            window.show();
+            loadMenu(window);
+        });
 }

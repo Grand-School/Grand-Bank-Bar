@@ -5,11 +5,23 @@ const { dialog } = require('electron');
 
 class Reader {
     constructor(port) {
-        this._serialPort = new SerialPort(port);
         this._onCard = () => {};
         this._lastCard = null;
         this._lastCardTimeout = null;
+        this._console = [];
+        this._onConsole = () => {};
+    }
 
+    loadPort(port) {
+        if (this._serialPort) {
+            this._serialPort.close(error => {
+                let message = error ? `Error while closing port: ${error.message}` : 'Old port closed';
+                console.log(message);
+                this._makeConsole(message)
+            });
+        }
+        this._makeConsole(`Connecting to port ${port}`);
+        this._serialPort = new SerialPort(port);
         this._loadParser();
     }
 
@@ -20,6 +32,8 @@ class Reader {
     }
 
     _loadData(data) {
+        this._makeConsole(data);
+
         if (data .startsWith('WARNING')) {
             console.log(data);
             dialog.showErrorBox('NFC READER WARNING', data.substr(9));
@@ -48,12 +62,25 @@ class Reader {
         this._lastCardTimeout = setTimeout(() => this._lastCard = null, 3000);
     }
 
+    _makeConsole(message) {
+        this._console.push(message);
+        this._onConsole(message);
+    }
+
     reload() {
         this._lastCard = null;
     }
 
     setOnCard(onCard) {
         this._onCard = onCard;
+    }
+
+    getConsole() {
+        return this._console;
+    }
+
+    setOnConsole(callback) {
+        this._onConsole = callback;
     }
 }
 

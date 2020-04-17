@@ -62,7 +62,6 @@ function renderTable(clazz = currentClazz) {
                         <td>${user.name}</td>
                         <td>${user.surname}</td>
                         <td>${user.username}</td>
-                        <td>${user.role}</td>
                         <td>${user.balance}</td>
                         <td>${user.creditCard}</td>
                         <td class="fa fa-pencil custom-button" onclick="update(${user.id}, '${showUserData(user)}')"></td>

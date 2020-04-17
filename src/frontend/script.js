@@ -1,7 +1,7 @@
 const $ = require('jquery');
 const server = require('electron-settings').get('server_url');
 const serverUrl = server + 'rest/';
-const { getJwt, getReader, setReader } = require('electron').remote.require('./app');
+const { getJwt, getReader, getCustomerEventListener, isLoggedIn } = require('electron').remote.require('./app');
 const settings = require('electron-settings');
 const Noty = require('noty');
 const showUserData = user => user.name + ' ' + user.surname;
@@ -10,7 +10,7 @@ require('bootstrap/dist/js/bootstrap.min');
 let failedNote;
 
 $(() => {
-    if (getJwt() !== null) {
+    if (isLoggedIn()) {
         $(document).ajaxSend((e, xhr) => xhr.setRequestHeader(settings.get('jwt_prefix', 'Authorization'), getJwt()));
     }
 

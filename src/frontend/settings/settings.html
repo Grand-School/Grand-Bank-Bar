@@ -14,7 +14,7 @@
     <script src="./settings.js" defer></script>
 </head>
 <body>
-<div class="modal fade" tabindex="-1" id="settingsRow">
+<div class="modal fade" tabindex="-1" id="settingsRow" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -22,6 +22,7 @@
             </div>
             <form id="settingsForm">
                 <div class="modal-body mb-3" id="formInputs">
+                    <h5>Общие настройки</h5>
                     <div class="form-group">
                         <label for="serverInput">Сервер</label>
                         <input type="text" name="server" id="serverInput" class="form-control"/>
@@ -35,6 +36,8 @@
                     <div class="form-group">
                         <label for="port">RFID Port</label>
                         <input type="text" name="port" id="port" class="form-control"/>
+                        <a href="#" id="consoleButton">Консоль</a>
+                        <div id="console" style="" class="rfidConsole" hidden></div>
                     </div>
 
                     <div class="form-group">
@@ -43,6 +46,30 @@
                             <option value="false">В окне</option>
                             <option value="true">На весь экран</option>
                         </select>
+                    </div>
+
+                    <hr>
+                    <h5>Окно покупателя</h5>
+
+                    <div class="form-group" style="margin: 0;">
+                        <input type="checkbox" id="customerWindow" name="customerWindow">
+                        <label for="customerWindow">Включить окно покупателя</label>
+                        <div class="invalid-feedback" hidden></div>
+                    </div>
+
+                    <div id="customerWindowSettings">
+                        <div class="form-group">
+                            <label for="customerWindowDisplay">Номер экрана покупателя</label>
+                            <input type="number" name="customerWindowDisplay" id="customerWindowDisplay" class="form-control"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customerWindowFullscreen">Режим отображения</label>
+                            <select class="form-control" name="customerWindowFullscreen" id="customerWindowFullscreen">
+                                <option value="false">В окне</option>
+                                <option value="true">На весь экран</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="margin-top: -20px;">
