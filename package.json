@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "start": "electron ./src/app.js",
-    "rebuild": "electron-rebuild"
+    "install": "electron-rebuild"
   },
   "keywords": [],
   "author": "",
