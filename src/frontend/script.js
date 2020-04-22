@@ -12,9 +12,8 @@ let failedNote;
 $(() => {
     if (isLoggedIn()) {
         $(document).ajaxSend((e, xhr) => xhr.setRequestHeader(settings.get('jwt_prefix', 'Authorization'), getJwt()));
+        $(document).ajaxError((event, jqXHR) => failNoty(jqXHR));
     }
-
-    $(document).ajaxError((event, jqXHR) => failNoty(jqXHR));
 });
 
 function failNoty(jqXHR) {

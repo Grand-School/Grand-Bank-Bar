@@ -37,17 +37,13 @@ $(() => {
             url: currentServer + 'rest/login',
             method: 'POST',
             data: $(loginForm).serialize(),
-            error: request => done(request),
-            success: (data, status, request) => done(request)
-        });
-
-        function done(request) {
+            error: response => {
+                let errorInfo = response.responseJSON;
+                failNotyText(errorInfo.message ? 'Ошибка: ' + errorInfo.message : 'Ошибка авторизации');
+            },
+        }).done((data, status, response) => {
             let headerName = settings.get('jwt_prefix', 'Authorization');
-            let token = request.getResponseHeader(headerName);
-            if (token === null) {
-                failNotyText('Вы ввели неверный логин и пароль или не подтвердили капчу');
-                return;
-            }
+            let token = response.getResponseHeader(headerName);
 
             $(loginRow).modal('hide');
 
@@ -66,6 +62,6 @@ $(() => {
                     headers
                 });
             });
-        }
+        });
     });
 });

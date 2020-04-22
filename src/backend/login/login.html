@@ -29,6 +29,10 @@
                         <label for="passwordInput">Пароль</label>
                         <input type="password" name="password" id="passwordInput" class="form-control"/>
                     </div>
+                    <div class="form-group">
+                        <label for="totpCode">2FA (если используется)</label>
+                        <input type="number" pattern="[\d]*" name="totp" id="totpCode" class="form-control"/>
+                    </div>
                 </div>
                 <div class="modal-footer" style="margin-top: -20px;">
                     <button type="submit" class="btn btn-primary">
