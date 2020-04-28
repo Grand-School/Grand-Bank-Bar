@@ -10,6 +10,12 @@ let customerEventListener = new CustomerEventListener();
 module.exports = {
     isLoggedIn: () => user !== null,
     getJwt: () => user.jwt,
+    haveProfile: () => user.profile !== null && user.profile !== undefined,
+    getProfile: () => user.profile,
+    setProfile: newUser => {
+        user.profile = newUser;
+        loadMenu(window);
+    },
     getReader: () => reader,
     getCustomerEventListener: () => customerEventListener,
     loadSettings, logout
@@ -32,33 +38,26 @@ app.whenReady()
         loadSettings(window);
         loadMenu(window);
 
-        let serverLoaded = () => {};
         loadServer({
-            done: () => {
+            serverUrl: settings.get('server_url'),
+            onDone: () => {
                 console.log('Start server on port 3000');
-                serverLoaded();
+                window.loadURL('http://localhost:3000')
+                    .then(() => window.show());
             },
             token: ({ jwt, profile }) => {
                 user = { jwt, profile };
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
-            },
-            server: settings.get('server_url')
+            }
         });
 
         if (user !== null && settings.has('server_url')) {
             window.loadFile('./frontend/bar/bar.html')
                 .then(() => window.show());
-        } else {
-            if (!settings.has('server_url')) {
-                window.loadFile('./frontend/settings/settings.html')
-                    .then(() => window.show());
-            } else {
-                serverLoaded = () => {
-                    window.loadURL('http://localhost:3000')
-                        .then(() => window.show());
-                };
-            }
+        } else if (!settings.has('server_url')) {
+            window.loadFile('./frontend/settings/settings.html')
+                .then(() => window.show());
         }
     });
 
@@ -166,8 +165,6 @@ function loadSettings(window) {
 function logout() {
     user = null;
     window.loadURL('http://localhost:3000')
-        .then(() => {
-            window.show();
-            loadMenu(window);
-        });
+        .then(() => window.show());
+    loadMenu(window);
 }

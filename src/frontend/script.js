@@ -1,7 +1,7 @@
 const $ = require('jquery');
 const server = require('electron-settings').get('server_url');
 const serverUrl = server + 'rest/';
-const { getJwt, getReader, getCustomerEventListener, isLoggedIn } = require('electron').remote.require('./app');
+const { getJwt, getReader, getCustomerEventListener, isLoggedIn, haveProfile, setProfile, getProfile } = require('electron').remote.require('./app');
 const settings = require('electron-settings');
 const Noty = require('noty');
 const showUserData = user => user.name + ' ' + user.surname;
@@ -11,8 +11,18 @@ let failedNote;
 
 $(() => {
     if (isLoggedIn()) {
-        $(document).ajaxSend((e, xhr) => xhr.setRequestHeader(settings.get('jwt_prefix', 'Authorization'), getJwt()));
+        $(document).ajaxSend((e, xhr) => {
+            let headers = getJwt().sign({}).headers;
+            for (let name in headers) {
+                xhr.setRequestHeader(name, headers[name]);
+            }
+        });
         $(document).ajaxError((event, jqXHR) => failNoty(jqXHR));
+
+        if (!haveProfile()) {
+            $.get(serverUrl + 'users/profile')
+                .done(user => setProfile(user));
+        }
     }
 });
 
