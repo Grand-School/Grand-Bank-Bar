@@ -1,21 +1,17 @@
 const electron = require('electron');
-const { app, BrowserWindow, Menu, MenuItem } = electron;
+const { app, BrowserWindow, Menu, MenuItem, dialog } = electron;
 const settings = require('electron-settings');
 const { loadServer } = require('./backend/server');
 const { CustomerEventListener } = require('./backend/customerEventListener');
 const { Reader } = require('./backend/reader');
+const rolesArr = ['ROLE_ADMIN', 'ROLE_RESPONSIBLE', 'ROLE_TEACHER', 'ROLE_BARMEN', 'ROLE_USER'];
+const hasAccess = (minRole, actualRole) => rolesArr.indexOf(minRole) >= rolesArr.indexOf(actualRole);
 let reader = new Reader(), customerWindow = null, user = null, window;
 let customerEventListener = new CustomerEventListener();
 
 module.exports = {
     isLoggedIn: () => user !== null,
     getJwt: () => user.jwt,
-    haveProfile: () => user.profile !== null && user.profile !== undefined,
-    getProfile: () => user.profile,
-    setProfile: newUser => {
-        user.profile = newUser;
-        loadMenu(window);
-    },
     getReader: () => reader,
     getCustomerEventListener: () => customerEventListener,
     loadSettings, logout
@@ -45,10 +41,15 @@ app.whenReady()
                 window.loadURL('http://localhost:3000')
                     .then(() => window.show());
             },
-            token: ({ jwt, profile }) => {
-                user = { jwt, profile };
+            token: data => {
+                user = { jwt: data, profile: data.data.user };
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
+            },
+            loginCanceled: () => {
+                window.loadURL('http://localhost:3000')
+                    .then(() => window.show());
+                dialog.showErrorBox('Вы не вошли', 'Вы не подтвердили вход. Пожалуйста, повторите попытку...');
             }
         });
 
@@ -79,7 +80,7 @@ function loadMenu(window) {
                 .then(() => window.show())
         }
     }));
-    if (user !== null) {
+    if (user !== null && user.profile !== undefined && hasAccess('ROLE_BARMEN', user.profile.role)) {
         menu.append(new MenuItem({
             label: 'Бар',
             click() {
@@ -88,7 +89,7 @@ function loadMenu(window) {
             }
         }));
     }
-    if (user !== null && user.profile !== undefined && (user.profile.role === 'ROLE_ADMIN' || user.profile.role === 'ROLE_RESPONSIBLE')) {
+    if (user !== null && user.profile !== undefined && hasAccess('ROLE_RESPONSIBLE', user.profile.role)) {
         menu.append(new MenuItem({
             label: 'Пользователи',
             click() {

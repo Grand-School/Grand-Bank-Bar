@@ -1,7 +1,7 @@
 const $ = require('jquery');
 const server = require('electron-settings').get('server_url');
 const serverUrl = server + 'rest/';
-const { getJwt, getReader, getCustomerEventListener, isLoggedIn, haveProfile, setProfile, getProfile } = require('electron').remote.require('./app');
+const { getJwt, getReader, getCustomerEventListener, isLoggedIn } = require('electron').remote.require('./app');
 const settings = require('electron-settings');
 const Noty = require('noty');
 const showUserData = user => user.name + ' ' + user.surname;
@@ -18,11 +18,6 @@ $(() => {
             }
         });
         $(document).ajaxError((event, jqXHR) => failNoty(jqXHR));
-
-        if (!haveProfile()) {
-            $.get(serverUrl + 'users/profile')
-                .done(user => setProfile(user));
-        }
     }
 });
 
