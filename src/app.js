@@ -97,16 +97,28 @@ function loadMenu(window) {
             }
         }));
     }
-    if (user !== null) {
-        menu.append(new MenuItem({
+    if (user !== null && user.profile !== undefined) {
+        let subMenu = new Menu();
+        subMenu.append(new MenuItem({
             label: 'Выйти',
             click: () => logout()
         }));
+        subMenu.append(new MenuItem({
+            label: 'Завершить',
+            click: () => app.quit()
+        }));
+
+        menu.append(new MenuItem({
+            label: user.profile.name + ' ' + user.profile.surname,
+            submenu: subMenu
+        }));
     }
-    menu.append(new MenuItem({
-        label: 'Завершить',
-        click: () => app.quit()
-    }));
+    if (user === null || user.profile === undefined) {
+        menu.append(new MenuItem({
+            label: 'Завершить',
+            click: () => app.quit()
+        }));
+    }
     Menu.setApplicationMenu(menu);
 }
 
