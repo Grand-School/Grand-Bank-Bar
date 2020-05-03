@@ -1,7 +1,7 @@
 const electron = require('electron');
-const { app, BrowserWindow, Menu, MenuItem, dialog } = electron;
+const { app, BrowserWindow, Menu, MenuItem, dialog, session } = electron;
 const settings = require('electron-settings');
-const { serverPort, baseUrl, oAuth } = require('./config');
+const { serverPort, baseUrl, cookies } = require('./config');
 const { loadServer } = require('./backend/server');
 const { CustomerEventListener } = require('./backend/customerEventListener');
 const { Reader } = require('./backend/reader');
@@ -44,6 +44,7 @@ app.whenReady()
             },
             token: data => {
                 user = { jwt: data, profile: data.data.user };
+                cookies.forEach(cookie => session.defaultSession.cookies.remove(baseUrl, cookie));
                 window.loadFile('./frontend/bar/bar.html');
                 loadMenu(window);
             },
