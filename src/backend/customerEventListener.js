@@ -8,7 +8,10 @@ class CustomerEventListener {
     }
 
     send(event, data) {
-        this.eventsMap.get(event)(data);
+        let callback = this.eventsMap.get(event);
+        if (typeof callback === 'function') {
+            callback(data);
+        }
     }
 }
 
