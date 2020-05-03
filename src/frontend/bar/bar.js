@@ -178,7 +178,7 @@ function renderBarItems() {
             barItemsStorage = response;
             itemsToBuy.innerHTML = '';
             response.forEach(item => {
-                let img = item.hasImage ? `<img src="${serverUrl}bar/items/${item.id}/image" class="card-img-top" alt="${item.name}">` : '';
+                let img = item.hasImage ? `<img src="${server}resource/bar/items/${item.id}" class="card-img-top" alt="${item.name}">` : '';
                 itemsToBuy.insertAdjacentHTML('beforeend', `
                     <div class="col-sm-2">
                         <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">

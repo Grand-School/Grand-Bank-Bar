@@ -196,7 +196,7 @@ $(() => {
             }
 
             let item = items[i];
-            let img = item.hasImage ? `<img src="${serverUrl}bar/items/${item.id}/image" class="card-img-top" alt="">` : '';
+            let img = item.hasImage ? `<img src="${server}resource/bar/items/${item.id}" class="card-img-top" alt="">` : '';
             currentElement.insertAdjacentHTML('beforeend', `
                 <div class="col-sm-1 mb-2 bar-item">
                     <div class="card" style="width: 9rem;" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
