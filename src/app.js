@@ -1,6 +1,7 @@
 const electron = require('electron');
 const { app, BrowserWindow, Menu, MenuItem, dialog } = electron;
 const settings = require('electron-settings');
+const { serverPort, baseUrl, oAuth } = require('./config');
 const { loadServer } = require('./backend/server');
 const { CustomerEventListener } = require('./backend/customerEventListener');
 const { Reader } = require('./backend/reader');
@@ -10,6 +11,7 @@ let reader = new Reader(), customerWindow = null, user = null, window;
 let customerEventListener = new CustomerEventListener();
 
 module.exports = {
+    getServer: () => baseUrl,
     isLoggedIn: () => user !== null,
     getJwt: () => user.jwt,
     getReader: () => reader,
@@ -35,10 +37,9 @@ app.whenReady()
         loadMenu(window);
 
         loadServer({
-            serverUrl: settings.get('server_url'),
             onDone: () => {
-                console.log('Start server on port 3000');
-                window.loadURL('http://localhost:3000')
+                console.log(`Start server on port ${serverPort}`);
+                window.loadURL(`http://localhost:${serverPort}`)
                     .then(() => window.show());
             },
             token: data => {
@@ -47,17 +48,14 @@ app.whenReady()
                 loadMenu(window);
             },
             loginCanceled: () => {
-                window.loadURL('http://localhost:3000')
+                window.loadURL(`http://localhost:${serverPort}`)
                     .then(() => window.show());
                 dialog.showErrorBox('Вы не вошли', 'Вы не подтвердили вход. Пожалуйста, повторите попытку...');
             }
         });
 
-        if (user !== null && settings.has('server_url')) {
+        if (user !== null) {
             window.loadFile('./frontend/bar/bar.html')
-                .then(() => window.show());
-        } else if (!settings.has('server_url')) {
-            window.loadFile('./frontend/settings/settings.html')
                 .then(() => window.show());
         }
     });
@@ -68,7 +66,7 @@ function loadMenu(window) {
         menu.append(new MenuItem({
             label: 'Войти',
             click() {
-                window.loadURL('http://localhost:3000')
+                window.loadURL(`http://localhost:${serverPort}`)
                     .then(() => window.show());
             }
         }));
@@ -165,7 +163,7 @@ function loadSettings(window) {
 
 function logout() {
     user = null;
-    window.loadURL('http://localhost:3000')
+    window.loadURL(`http://localhost:${serverPort}`)
         .then(() => window.show());
     loadMenu(window);
 }

@@ -1,7 +1,6 @@
 const SerialPort = require('serialport');
 const deskWindow = require('electron').remote.getCurrentWindow();
 const { logout, loadSettings } = require('electron').remote.require('./app');
-const serverInput = document.getElementById('serverInput');
 const settingsForm = document.getElementById('settingsForm');
 let port = document.getElementById('port');
 const logoutButton = document.getElementById('logoutButton');
@@ -18,7 +17,6 @@ $(() => {
     $(settingsRow).modal();
     $(settingsRow).modal({ keyboard: false });
 
-    serverInput.value = settings.get('server_url', '');
     port.value = settings.get('port', '');
     customerWindowDisplay.value = settings.get('customer_window_display', 1);
     customerWindow.checked = settings.get('customer_window', false);
@@ -29,9 +27,6 @@ $(() => {
     settingsForm.addEventListener('submit', e => {
         e.preventDefault();
 
-        if (serverInput.value !== '') {
-            settings.set('server_url', serverInput.value);
-        }
         if (port.value !== '') {
             settings.set('port', port.value);
         }

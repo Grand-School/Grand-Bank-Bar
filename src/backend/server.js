@@ -1,18 +1,10 @@
 const express = require('express');
 const http = require('http');
 const ClientOAuth2 = require('client-oauth2');
-const port = 3000;
+const { serverPort, oAuth } = require('../config');
 
-function loadServer({ onDone, token, loginCanceled, serverUrl }) {
-    const client = new ClientOAuth2({
-        clientId: '',
-        clientSecret: '',
-        accessTokenUri: serverUrl + 'oauth/token',
-        authorizationUri: serverUrl + 'oauth/authorize',
-        userInfoUrl: serverUrl + 'rest/users/profile',
-        redirectUri: `http://localhost:${port}/login/callback`,
-        scopes: ['user_info', 'pages:bar', 'pages:users']
-    });
+function loadServer({ onDone, token, loginCanceled }) {
+    const client = new ClientOAuth2(oAuth);
 
     let app = express();
     let server = http.createServer(app);
@@ -27,7 +19,7 @@ function loadServer({ onDone, token, loginCanceled, serverUrl }) {
             .catch(error => loginCanceled());
     });
 
-    server.listen(port, () => onDone());
+    server.listen(serverPort, () => onDone());
 }
 
 module.exports = { loadServer };
