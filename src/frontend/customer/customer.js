@@ -160,6 +160,7 @@ $(() => {
             $(pincodeCircle).removeClass('load-error').toggleClass('load-complete');
             $(pinCodeCheckmark).removeClass('error').addClass('draw').toggle();
             successNoty("Товары были успешны куплены!");
+            confetti.start();
             setTimeout(() => {
                 $(pincodeRow).modal('hide');
                 pinPasswordInput.value = '';
@@ -167,6 +168,7 @@ $(() => {
                 pincodeCircle.hidden = true;
                 $(pincodeCircle).removeClass('load-error').removeClass('load-complete');
                 $(pinCodeCheckmark).removeClass('error').addClass('draw').toggle();
+                confetti.stop();
             }, 1000);
         } else if (status === 'error') {
             $(pincodeCircle).removeClass('load-complete').toggleClass('load-error');
