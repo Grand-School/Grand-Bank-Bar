@@ -1,10 +1,10 @@
 const electron = require('electron');
 const { app, BrowserWindow, Menu, MenuItem, dialog, session } = electron;
 const settings = require('electron-settings');
-const { serverPort, baseUrl, cookies } = require('./config');
-const { loadServer } = require('./backend/server');
-const { CustomerEventListener } = require('./backend/customerEventListener');
-const { Reader } = require('./backend/reader');
+const { serverPort, baseUrl, cookies } = require(__dirname + '/config');
+const { loadServer } = require(__dirname + '/backend/server');
+const { CustomerEventListener } = require(__dirname + '/backend/customerEventListener');
+const { Reader } = require(__dirname + '/backend/reader');
 const rolesArr = ['ROLE_ADMIN', 'ROLE_RESPONSIBLE', 'ROLE_TEACHER', 'ROLE_BARMEN', 'ROLE_USER'];
 const hasAccess = (minRole, actualRole) => rolesArr.indexOf(minRole) >= rolesArr.indexOf(actualRole);
 let reader = new Reader(), customerWindow = null, user = null, window;
@@ -45,7 +45,7 @@ app.whenReady()
             token: data => {
                 user = { jwt: data, profile: data.data.user };
                 cookies.forEach(cookie => session.defaultSession.cookies.remove(baseUrl, cookie));
-                window.loadFile('./frontend/bar/bar.html');
+                window.loadFile(__dirname + '/frontend/bar/bar.html');
                 loadMenu(window);
             },
             loginCanceled: () => {
@@ -56,7 +56,7 @@ app.whenReady()
         });
 
         if (user !== null) {
-            window.loadFile('./frontend/bar/bar.html')
+            window.loadFile(__dirname + '/frontend/bar/bar.html')
                 .then(() => window.show());
         }
     });
@@ -75,7 +75,7 @@ function loadMenu(window) {
     menu.append(new MenuItem({
         label: 'Настройки',
         click() {
-            window.loadFile('./frontend/settings/settings.html')
+            window.loadFile(__dirname + '/frontend/settings/settings.html')
                 .then(() => window.show())
         }
     }));
@@ -83,7 +83,7 @@ function loadMenu(window) {
         menu.append(new MenuItem({
             label: 'Бар',
             click() {
-                window.loadFile('./frontend/bar/bar.html')
+                window.loadFile(__dirname + '/frontend/bar/bar.html')
                     .then(() => window.show())
             }
         }));
@@ -92,7 +92,7 @@ function loadMenu(window) {
         menu.append(new MenuItem({
             label: 'Пользователи',
             click() {
-                window.loadFile('./frontend/users/users.html')
+                window.loadFile(__dirname + '/frontend/users/users.html')
                     .then(() => window.show())
             }
         }));
@@ -153,7 +153,7 @@ function loadSettings(window) {
 
             customerWindow.maximize();
             customerWindow.removeMenu();
-            customerWindow.loadFile('./frontend/customer/customer.html')
+            customerWindow.loadFile(__dirname + '/frontend/customer/customer.html')
                 .then(() => customerWindow.show());
         } else {
             customerWindow.setPosition(x, y);
