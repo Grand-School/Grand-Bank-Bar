@@ -95,8 +95,11 @@ $(() => {
         });
     });
 
-    customerWindow.addEventListener('click', e => {
-        customerWindowSettings.querySelectorAll('input')
-            .forEach(item => item.disabled = !customerWindow.checked);
-    });
+    loadCustomerWindowSettings();
+    customerWindow.addEventListener('click', e => loadCustomerWindowSettings());
 });
+
+function loadCustomerWindowSettings() {
+    customerWindowSettings.querySelectorAll('input, select')
+        .forEach(item => item.disabled = !customerWindow.checked);
+}
