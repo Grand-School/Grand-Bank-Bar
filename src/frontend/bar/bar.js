@@ -89,6 +89,10 @@ $(() => {
                             $(pincodeCircle).removeClass('load-error').removeClass('load-complete');
                             $(pincodeCheckmark).removeClass('error').addClass('draw').toggle();
                             pincodeBox.focus();
+
+                            if (data.responseJSON.type === 'TOO_MANY_PIN_CODE_INCORRECT_TRIES') {
+                                $(pincodeRow).modal('hide');
+                            }
                         }, 1000);
                     }
                 }).done(response => {
