@@ -7,7 +7,7 @@ const { CustomerEventListener } = require(__dirname + '/backend/customerEventLis
 const { Reader } = require(__dirname + '/backend/reader');
 const rolesArr = ['ROLE_ADMIN', 'ROLE_RESPONSIBLE', 'ROLE_TEACHER', 'ROLE_BARMEN', 'ROLE_USER'];
 const hasAccess = (minRole, actualRole) => rolesArr.indexOf(minRole) >= rolesArr.indexOf(actualRole);
-let reader = new Reader(), customerWindow = null, user = null, window;
+let reader = new Reader(), customerWindow = null, user = null, window, authWindow;
 let customerEventListener = new CustomerEventListener();
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
     getJwt: () => user.jwt,
     getReader: () => reader,
     getCustomerEventListener: () => customerEventListener,
-    loadSettings, logout
+    loadSettings, logout, openOAuthWindow
 };
 
 app.allowRendererProcessReuse = true;
@@ -39,19 +39,17 @@ app.whenReady()
         loadServer({
             onDone: () => {
                 console.log(`Start server on port ${serverPort}`);
-                window.loadURL(`http://localhost:${serverPort}`)
-                    .then(() => window.show());
+                loginPage();
             },
             token: data => {
                 user = { jwt: data, profile: data.data.user };
                 cookies.forEach(cookie => session.defaultSession.cookies.remove(baseUrl, cookie));
-                window.loadFile(__dirname + '/frontend/bar/bar.html');
+                loginSuccess();
                 loadMenu(window);
             },
             loginCanceled: () => {
-                window.loadURL(`http://localhost:${serverPort}`)
-                    .then(() => window.show());
-                dialog.showErrorBox('Вы не вошли', 'Вы не подтвердили вход. Пожалуйста, повторите попытку...');
+                customerEventListener.send('loginStates', { loggedIn: false });
+                authWindow.close();
             }
         });
 
@@ -61,15 +59,40 @@ app.whenReady()
         }
     });
 
+function loginPage() {
+    openOAuthWindow();
+    window.loadFile(__dirname + '/frontend/authorization/authorization.html')
+        .then(() => window.show());
+}
+
+function openOAuthWindow() {
+    authWindow = new BrowserWindow({
+        show: false,
+        icon: __dirname + '/icon.ico',
+        alwaysOnTop: true,
+
+        webPreferences: {
+            nodeIntegration: true,
+            webSecurity: false
+        }
+    });
+
+    authWindow.loadURL(`http://localhost:${serverPort}`)
+        .then(() => authWindow.show());
+}
+
+function loginSuccess() {
+    customerEventListener.send('loginStates', { loggedIn: true });
+    window.loadFile(__dirname + '/frontend/bar/bar.html');
+    authWindow.close();
+}
+
 function loadMenu(window) {
     let menu = new Menu();
     if (user === null) {
         menu.append(new MenuItem({
             label: 'Войти',
-            click() {
-                window.loadURL(`http://localhost:${serverPort}`)
-                    .then(() => window.show());
-            }
+            click: () => loginPage()
         }));
     }
     menu.append(new MenuItem({
@@ -176,7 +199,6 @@ function loadSettings(window) {
 
 function logout() {
     user = null;
-    window.loadURL(`http://localhost:${serverPort}`)
-        .then(() => window.show());
+    loginPage();
     loadMenu(window);
 }
