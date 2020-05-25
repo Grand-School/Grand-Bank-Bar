@@ -77,6 +77,10 @@ function openOAuthWindow() {
         }
     });
 
+    authWindow.on('close', () => {
+        customerEventListener.send('loginStates', { loggedIn: false });
+    });
+
     authWindow.loadURL(`http://localhost:${serverPort}`)
         .then(() => authWindow.show());
 }
