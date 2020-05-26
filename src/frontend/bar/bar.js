@@ -19,7 +19,10 @@ const updateItem = data => getCustomerEventListener().send('itemsUpdate', { item
 
 $(() => {
     $.get(serverUrl + 'api/creditcard')
-        .done(response => creditCards = response);
+        .done(response => {
+            creditCards = response;
+            getCustomerEventListener().send('creditCardsSettings', response);
+        });
 
     renderBarItems();
 

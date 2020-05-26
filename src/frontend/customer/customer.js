@@ -21,12 +21,13 @@ const pincodeRow = document.getElementById('pincodeRow');
 const pinPasswordInput = document.querySelector('#pinPasswordInput input');
 const pincodeCircle = document.querySelector('#pinPasswordInput div');
 const pinCodeCheckmark = pincodeCircle.querySelector('.checkmark');
+const cardElement = document.getElementById('creditCard');
 const waitingClientModal = `
     <div class="text-center"  style="padding-bottom: 40px; padding-top: 40px;">
         <h3>Ожидание клиента</h3>
     </div>
 `;
-let modalShown = false, swiper = null, userSalesSwiper = null, currentModalBody = null, itemsStorage = null;
+let modalShown = false, swiper = null, userSalesSwiper = null, currentModalBody = null, itemsStorage = null, creditCardStyles = [];
 
 $(() => {
     $(modal).on('show.bs.modal', () => {
@@ -38,6 +39,8 @@ $(() => {
     renderModal(waitingClientModal);
 
     let eventListener = getCustomerEventListener();
+
+    document.getElementById('cardLogo').src = server + 'resources/img/grand.png';
 
     swiper = new Swiper(swiperEl, {
         spaceBetween: 30,
@@ -65,15 +68,18 @@ $(() => {
 
     eventListener.on('client', client => {
         $(modal).modal('hide');
-        userBalance.innerHTML = `Баланс: <span class="balance-span">${client.balance} грандик(ов)</span>`;
+        userBalance.textContent = client.balance;
         userBalance.dataset.balance = client.balance;
         userName.textContent = showUserData(client);
-        userCardType.textContent = `Тип карты: ${client.cardName}`;
-        userCardNumber.textContent = `Номер карты: ${client.creditCard}`;
+        userCardType.textContent = client.cardName;
+        userCardNumber.textContent = getSeparatedCardNumber(client.creditCard);
         taxSpan.textContent = `Налог: ${client.tax}%`;
         taxSpan.dataset.tax = client.tax;
         totalSum.textContent = 'Всего: 0 грандиков';
         withdraw.textContent = 'К снятию: 0 грандиков';
+        cardElement.hidden = false;
+
+        loadCreditCard(client.cardType);
 
         let sales = itemsStorage.reduce((acc, item) => {
             let sales = item.sales.filter(item => item.cardType === client.cardType);
@@ -121,15 +127,12 @@ $(() => {
 
     eventListener.on('cancelClient', () => {
         renderModal(waitingClientModal);
-        userBalance.innerHTML = '';
-        userName.textContent = '';
-        userCardNumber.textContent = '';
-        userCardType.textContent = '';
         itemsToBuyList.innerHTML = '';
         totalSum.textContent = '';
         taxSpan.textContent = '';
         withdraw.textContent = '';
         userSales.hidden = true;
+        cardElement.hidden = true;
     });
 
     eventListener.on('itemsUpdate', ({ itemsHtml, totalPrice }) => {
@@ -138,11 +141,6 @@ $(() => {
         let taxSum = totalPrice * tax / 100;
         totalSum.textContent = `Всего: ${totalPrice} грандиков`;
         withdraw.textContent = `К снятию: ${totalPrice + taxSum} грандиков`;
-        if (+userBalance.dataset.balance < totalPrice + taxSum) {
-            userBalance.querySelector('.balance-span').style.color = 'red';
-        } else {
-            userBalance.querySelector('.balance-span').style.color = 'unset';
-        }
     });
 
     eventListener.on('pinCode', status => {
@@ -184,6 +182,16 @@ $(() => {
     });
 
     eventListener.on('pinCodeInput', value => pinPasswordInput.value = value);
+    eventListener.on('creditCardsSettings', settings => {
+        settings.forEach(card => {
+            fetch(server + card.style.substring(1))
+                .then(response => response.json())
+                .then(styles => {
+                    creditCardStyles[card.codeName] = styles;
+                    loadCardFont(styles);
+                });
+        });
+    });
 
     eventListener.on('items', items => {
         itemsStorage = items;
@@ -286,4 +294,58 @@ function moveModalBackground() {
     setTimeout(() => {
         $('.modal-backdrop').css({ top: offsetHeight });
     }, 40);
+}
+
+function loadCreditCard(cardCodeName) {
+    let cardStyles = creditCardStyles[cardCodeName];
+    cardElement.querySelector('.card__front').style.backgroundImage = `url("${server + cardStyles.frontImage.substring(1)}")`;
+
+    if (cardStyles.styles !== undefined && cardStyles.styles.css !== undefined) {
+        let styles = cardStyles.styles.css;
+        for (let className in styles) {
+            let settings = cardElement.querySelector('.' + className);
+            for (let settingName in styles[className]) {
+                settings.style[settingName] = styles[className][settingName];
+            }
+        }
+    }
+
+    if (cardStyles.setFonts !== undefined) {
+        for (let className in cardStyles.setFonts) {
+            let fontSettings = cardStyles.setFonts[className];
+            let font = `'${fontSettings.fontFamily}'`;
+            if (fontSettings.fontType !== undefined) {
+                font += ', ' + fontSettings.fontType;
+            }
+            cardElement.querySelector('.' + className).style.fontFamily = font;
+        }
+    }
+}
+
+function loadCardFont(cardStyles) {
+    if (cardStyles.loadFonts !== undefined) {
+        cardStyles.loadFonts.forEach(font => {
+            if (font.css === undefined) {
+                return;
+            }
+
+            let fontLoaded = document.querySelector(`link[href="${font.css}"]`) !== null;
+            if (!fontLoaded) {
+                const head = document.querySelector('head');
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = server + font.css.substring(1);
+                head.appendChild(link);
+            }
+        });
+    }
+}
+
+function getSeparatedCardNumber(number) {
+    let result = '';
+    for (let i = 0; i < number.length; i++) {
+        result += i % 4 === 0 ? ' ' + number[i] : number[i];
+    }
+    return result.trim();
 }
