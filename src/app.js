@@ -92,6 +92,8 @@ function loginSuccess() {
 }
 
 function loadMenu(window) {
+    let mainMenu = new Menu();
+
     let menu = new Menu();
     if (user === null) {
         menu.append(new MenuItem({
@@ -124,29 +126,29 @@ function loadMenu(window) {
             }
         }));
     }
+    menu.append(new MenuItem({
+        label: 'Завершить',
+        click: () => app.quit()
+    }));
+
+    mainMenu.append(new MenuItem({
+        label: 'Главная',
+        submenu: menu
+    }));
+
     if (user !== null && user.profile !== undefined) {
         let subMenu = new Menu();
         subMenu.append(new MenuItem({
             label: 'Выйти',
             click: () => logout()
         }));
-        subMenu.append(new MenuItem({
-            label: 'Завершить',
-            click: () => app.quit()
-        }));
 
-        menu.append(new MenuItem({
+        mainMenu.append(new MenuItem({
             label: user.profile.name + ' ' + user.profile.surname,
             submenu: subMenu
         }));
     }
-    if (user === null || user.profile === undefined) {
-        menu.append(new MenuItem({
-            label: 'Завершить',
-            click: () => app.quit()
-        }));
-    }
-    Menu.setApplicationMenu(menu);
+    Menu.setApplicationMenu(mainMenu);
 }
 
 function loadSettings(window) {
