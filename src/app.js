@@ -16,7 +16,8 @@ module.exports = {
     getJwt: () => user.jwt,
     getReader: () => reader,
     getCustomerEventListener: () => customerEventListener,
-    loadSettings, logout, openOAuthWindow
+    loadSettings, logout, openOAuthWindow,
+    platform: process.platform
 };
 
 app.allowRendererProcessReuse = true;

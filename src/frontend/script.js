@@ -1,5 +1,5 @@
 const $ = require('jquery');
-const { getJwt, getReader, getCustomerEventListener, isLoggedIn, getServer } = require('electron').remote.require('./app');
+const { getJwt, getReader, getCustomerEventListener, isLoggedIn, getServer, platform } = require('electron').remote.require('./app');
 const server = getServer();
 const serverUrl = server + 'rest/';
 const settings = require('electron-settings');
@@ -16,6 +16,9 @@ $(() => {
             for (let name in headers) {
                 xhr.setRequestHeader(name, headers[name]);
             }
+
+            xhr.setRequestHeader('Native-Application', 'Grand Bank Bar');
+            xhr.setRequestHeader('Native-Application-Platform', platform);
         });
         $(document).ajaxError((event, jqXHR) => failNoty(jqXHR));
     }
