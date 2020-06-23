@@ -79,7 +79,7 @@ $(() => {
         withdraw.textContent = 'К снятию: 0 грандиков';
         cardElement.hidden = false;
 
-        loadCreditCard(client.cardType);
+        loadCreditCard(client.cardType, client.cardImage);
 
         let sales = itemsStorage.reduce((acc, item) => {
             let sales = item.sales.filter(item => item.cardType === client.cardType);
@@ -296,9 +296,11 @@ function moveModalBackground() {
     }, 40);
 }
 
-function loadCreditCard(cardCodeName) {
+function loadCreditCard(cardCodeName, image) {
     let cardStyles = creditCardStyles[cardCodeName];
-    cardElement.querySelector('.card__front').style.backgroundImage = `url("${server + cardStyles.frontImage.substring(1)}")`;
+    let cardImage = cardStyles.images[image] || cardStyles.images[0]
+    let cardImageUrl = cardImage.frontImage.substring(1)
+    cardElement.querySelector('.card__front').style.backgroundImage = `url("${server + cardImageUrl}")`;
 
     if (cardStyles.styles !== undefined && cardStyles.styles.css !== undefined) {
         let styles = cardStyles.styles.css;
