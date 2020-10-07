@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grand Bank Bar</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../../node_modules/noty/lib/noty.css">
+
+    <script src="../../../node_modules/stomp-websocket/lib/stomp.min.js" defer></script>
+    <script src="../../../node_modules/sockjs-client/dist/sockjs.min.js" defer></script>
+    <script src="../script.js" defer></script>
+    <script src="delivery.js" defer></script>
+</head>
+<body>
+<div class="container-fluid">
+    <main role="main" class="ml-sm-auto px-4">
+        <div class="container">
+            <h1>Доставка</h1>
+
+            <div class="row row-cols-1 row-cols-md-3" id="cardsTable"></div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

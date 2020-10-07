@@ -117,6 +117,13 @@ function loadMenu(window) {
                     .then(() => window.show())
             }
         }));
+        menu.append(new MenuItem({
+            label: 'Доставка',
+            click() {
+                window.loadFile(__dirname + '/frontend/delivery/delivery.html')
+                    .then(() => window.show())
+            }
+        }));
     }
     if (user !== null && user.profile !== undefined && hasAccess('ROLE_RESPONSIBLE', user.profile.role)) {
         menu.append(new MenuItem({

@@ -28,7 +28,9 @@
     "node-gyp": "^6.1.0",
     "noty": "^3.1.4",
     "popper.js": "^1.16.1",
-    "serialport": "^7.1.5",
+    "serialport": "^8.0.8",
+    "sockjs-client": "^1.5.0",
+    "stomp-websocket": "^2.3.4-next",
     "swiper": "^5.3.7"
   }
 }
