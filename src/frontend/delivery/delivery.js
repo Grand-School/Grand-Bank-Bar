@@ -29,6 +29,7 @@ function renderTable() {
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Доставка #${item.id}</h5>
+                            <span class="text-muted">${parseDate(item.date)}</span>
                             <div class="card-text">Покупатель: <b>${item.toUser.name} ${item.toUser.surname}</b></div>
                             <div class="card-text">Товары: <b>${getItemsList(item.items)}</b></div>
                             <div class="card-text">Статус: <b>${DELIVERY_STATUS_TRANSLATION[item.status]}</b></div>
@@ -81,6 +82,17 @@ function getItemsList(items) {
 
     return arrayResult.join(', ');
 }
+
+function parseDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = addZeroPrefix(date.getDay());
+    const month = addZeroPrefix(date.getMonth());
+    const hours = addZeroPrefix(date.getHours());
+    const minutes = addZeroPrefix(date.getMinutes());
+    return `${day}.${month}.${date.getFullYear()} ${hours}:${minutes}`;
+}
+
+const addZeroPrefix = num => ('0' + num).substr(-2);
 
 const DISPLAY_DELIVERY_STATUS = ['CREATED', 'COURIER_FOUND', 'PACKAGING', 'DELIVERING'];
 
