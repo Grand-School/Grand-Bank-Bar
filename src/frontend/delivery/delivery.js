@@ -30,7 +30,7 @@ function renderTable() {
                         <div class="card-body">
                             <h5 class="card-title">Доставка #${item.id}</h5>
                             <span class="text-muted">${parseDate(item.date)}</span>
-                            <div class="card-text">Покупатель: <b>${item.toUser.name} ${item.toUser.surname}</b></div>
+                            <div class="card-text">Покупатель: <b>${item.toUser.name} ${item.toUser.surname} (${item.toUser.class} класс)</b></div>
                             <div class="card-text">Товары: <b>${getItemsList(item.items)}</b></div>
                             <div class="card-text">Статус: <b>${DELIVERY_STATUS_TRANSLATION[item.status]}</b></div>
                             ${item.operator 
