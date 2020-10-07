@@ -3,7 +3,7 @@ let storage = {};
 
 $(() => {
     const jwtToken = getJwt().accessToken;
-    const url = `http://localhost:8080/rest/websocket?access_token=${jwtToken}`;
+    const url = `${serverUrl}websocket?access_token=${jwtToken}`;
     const socket = SockJS(url);
     const stompClient = Stomp.over(socket);
 
