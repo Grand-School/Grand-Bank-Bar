@@ -1,4 +1,6 @@
 const cardsTable = document.getElementById('cardsTable');
+const deliverySound = new Audio('../sound/delivery.mp3');
+const deliveryOrderFilter = delivery => DISPLAY_DELIVERY_STATUS.includes(delivery.status);
 let storage = {};
 
 $(() => {
@@ -12,7 +14,10 @@ $(() => {
 
         stompClient.subscribe('/topic/admin/delivery', data => {
             const delivery = JSON.parse(data.body);
-            storage[delivery.id] = delivery;
+            if (deliveryOrderFilter(delivery)) {
+                storage[delivery.id] = delivery;
+                deliverySound.play();
+            }
             renderTable();
         });
     });
@@ -21,8 +26,7 @@ $(() => {
 });
 
 function renderTable() {
-    let orders = Object.values(storage)
-        .filter(item => DISPLAY_DELIVERY_STATUS.includes(item.status));
+    let orders = Object.values(storage).filter(deliveryOrderFilter);
 
     cardsTable.innerHTML = orders
         .reduce((acc, item) => {

@@ -13,7 +13,7 @@ const pincodeBox = document.querySelector('.pincode-box');
 const pincodeRow = document.getElementById('pincodeRow');
 const pincodeCircle = document.querySelector('.circle-loader');
 const pincodeCheckmark = document.querySelector('.checkmark');
-const pincodeSound = new Audio('../pincode-succes.mp3');
+const pincodeSound = new Audio('../sound/pincode-succes.mp3');
 let barItemsStorage, buyPanel, creditCards, pincodeCallback = () => {};
 const updateItem = data => getCustomerEventListener().send('itemsUpdate', { itemsHtml: itemsToBuyList.innerHTML, totalPrice: data.totalPrice });
 
