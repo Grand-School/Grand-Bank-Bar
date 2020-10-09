@@ -21,8 +21,10 @@ $(() => {
 });
 
 function renderTable() {
-    cardsTable.innerHTML = Object.values(storage)
-        .filter(item => DISPLAY_DELIVERY_STATUS.includes(item.status))
+    let orders = Object.values(storage)
+        .filter(item => DISPLAY_DELIVERY_STATUS.includes(item.status));
+
+    cardsTable.innerHTML = orders
         .reduce((acc, item) => {
             return acc += `
                 <div class="col mb-4">
@@ -41,6 +43,12 @@ function renderTable() {
                 </div>
             `;
         }, '');
+
+    if (orders.length === 0) {
+        cardsTable.innerHTML = `
+            <h3>Заказов нет</h3>
+        `;
+    }
 }
 
 function loadData() {
@@ -84,12 +92,15 @@ function getItemsList(items) {
 }
 
 function parseDate(dateStr) {
+    const now = new Date();
     const date = new Date(dateStr);
+    const isToday = now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && date.getDay() === now.getDay();
     const day = addZeroPrefix(date.getDay());
     const month = addZeroPrefix(date.getMonth());
     const hours = addZeroPrefix(date.getHours());
     const minutes = addZeroPrefix(date.getMinutes());
-    return `${day}.${month}.${date.getFullYear()} ${hours}:${minutes}`;
+    let time = `${hours}:${minutes}`;
+    return isToday ? time : `${day}.${month}.${date.getFullYear()} ${time}`;
 }
 
 const addZeroPrefix = num => ('0' + num).substr(-2);
