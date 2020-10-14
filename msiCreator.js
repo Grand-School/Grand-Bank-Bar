@@ -9,7 +9,7 @@ const msiCreator = new MSICreator({
     exe: 'GrandBankBar',
     name: 'Grand Bank Bar',
     manufacturer: 'Grand School',
-    version: '1.0.0',
+    version: '2.0',
 
     ui: {
         chooseDirectory: true
