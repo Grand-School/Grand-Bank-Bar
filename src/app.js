@@ -6,7 +6,7 @@ const { loadServer } = require(__dirname + '/backend/server');
 const { CustomerEventListener } = require(__dirname + '/backend/customerEventListener');
 const { Reader } = require(__dirname + '/backend/reader');
 const rolesArr = ['ROLE_ADMIN', 'ROLE_RESPONSIBLE', 'ROLE_TEACHER', 'ROLE_BARMEN', 'ROLE_USER'];
-const hasAccess = (minRole, actualRole) => rolesArr.indexOf(minRole) >= rolesArr.indexOf(actualRole);
+const hasAccess = (minRole, user) => user && user.profile && rolesArr.indexOf(minRole) >= rolesArr.indexOf(user.profile.role);
 let reader = new Reader(), customerWindow = null, user = null, window, authWindow;
 let customerEventListener = new CustomerEventListener();
 
@@ -109,7 +109,7 @@ function loadMenu(window) {
                 .then(() => window.show())
         }
     }));
-    if (user !== null && user.profile !== undefined && hasAccess('ROLE_BARMEN', user.profile.role)) {
+    if (hasAccess('ROLE_BARMEN', user)) {
         menu.append(new MenuItem({
             label: 'Бар',
             click() {
@@ -117,6 +117,8 @@ function loadMenu(window) {
                     .then(() => window.show())
             }
         }));
+    }
+    if (hasAccess('ROLE_RESPONSIBLE', user)) {
         menu.append(new MenuItem({
             label: 'Доставка',
             click() {
@@ -124,8 +126,6 @@ function loadMenu(window) {
                     .then(() => window.show())
             }
         }));
-    }
-    if (user !== null && user.profile !== undefined && hasAccess('ROLE_RESPONSIBLE', user.profile.role)) {
         menu.append(new MenuItem({
             label: 'Пользователи',
             click() {
