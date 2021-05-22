@@ -31,6 +31,6 @@
     "serialport": "^8.0.8",
     "sockjs-client": "^1.5.0",
     "stomp-websocket": "^2.3.4-next",
-    "swiper": "^5.3.7"
+    "swiper": "^6.5.1"
   }
 }
